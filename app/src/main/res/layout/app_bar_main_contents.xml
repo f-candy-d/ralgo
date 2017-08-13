@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="d.candy.f.com.ralgo.MainContentsActivity">
+    tools:context="d.candy.f.com.ralgo.presentation.MainContentsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
@@ -21,7 +21,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main_contents"/>
+    <include layout="@layout/fragment_container"
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
