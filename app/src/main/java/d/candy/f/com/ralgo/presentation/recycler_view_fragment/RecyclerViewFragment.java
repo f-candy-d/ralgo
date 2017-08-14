@@ -1,16 +1,13 @@
-package d.candy.f.com.ralgo.presentation;
+package d.candy.f.com.ralgo.presentation.recycler_view_fragment;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import d.candy.f.com.ralgo.R;
+import d.candy.f.com.ralgo.presentation.recycler_view_fragment.RecyclerVIewFragmentAdapter;
 
 /**
  * Created by daichi on 17/08/14.
@@ -21,6 +18,9 @@ abstract public class RecyclerViewFragment<VH extends RecyclerView.ViewHolder> e
 
     private RecyclerVIewFragmentAdapter<VH> mAdapter;
 
+    /**
+     * TODO; Call this method in onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState).
+     */
     protected View onCreateView(LayoutInflater inflater, ViewGroup container, int layoutId, int recyclerViewId) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(layoutId, container, false);
@@ -40,5 +40,5 @@ abstract public class RecyclerViewFragment<VH extends RecyclerView.ViewHolder> e
     }
 
     @NonNull
-    abstract RecyclerView.LayoutManager getLayoutManager();
+    abstract protected RecyclerView.LayoutManager getLayoutManager();
 }

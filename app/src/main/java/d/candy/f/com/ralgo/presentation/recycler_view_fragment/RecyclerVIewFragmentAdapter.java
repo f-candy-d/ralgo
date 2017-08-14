@@ -1,4 +1,4 @@
-package d.candy.f.com.ralgo.presentation;
+package d.candy.f.com.ralgo.presentation.recycler_view_fragment;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

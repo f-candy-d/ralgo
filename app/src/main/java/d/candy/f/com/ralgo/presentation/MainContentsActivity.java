@@ -17,7 +17,7 @@ import d.candy.f.com.ralgo.R;
 import d.candy.f.com.ralgo.domain.DomainDirector;
 
 public class MainContentsActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DayScheduleFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private enum RequestService {
 
