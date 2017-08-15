@@ -2,11 +2,7 @@ package d.candy.f.com.ralgo.infra.sqlite;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by daichi on 8/15/17.
@@ -40,7 +36,8 @@ public class SqliteWhere {
             mIsInBrancket = inBrancket;
         }
 
-        protected String toStringConsideringIsInBrancketAndNegation(@NonNull String baseExpression) {
+        @NonNull
+        protected String formalizeConsideringIsInBrancketAndNegation(@NonNull String baseExpression) {
             if (isNegation()) {
                 baseExpression = "NOT " + baseExpression;
             }
@@ -49,6 +46,8 @@ public class SqliteWhere {
                     ? "(" + baseExpression + ")"
                     : baseExpression;
         }
+
+        @NonNull abstract public String formalize();
     }
 
     /**
@@ -61,18 +60,17 @@ public class SqliteWhere {
             OR
         }
 
-        @NonNull private ArrayList<Pair<Expr, LogicOp>> mOperands;
+        @NonNull private String mExpression;
 
         public LogicExpr(@NonNull Expr mostLeftExpr) {
-         mOperands = new ArrayList<>();
-            mOperands.add(new Pair<Expr, LogicOp>(mostLeftExpr, null));
+            mExpression = mostLeftExpr.formalize();
         }
 
         /**
          * Add '[logicOp] [expr]' expression
          */
         private LogicExpr join(@NonNull Expr expr, @NonNull LogicOp logicOp) {
-            mOperands.add(new Pair<>(expr, logicOp));
+            mExpression = mExpression.concat(SPACE + logicOp.toString() + SPACE + expr.formalize());
             return this;
         }
 
@@ -130,25 +128,13 @@ public class SqliteWhere {
         }
 
         public void reset(@NonNull Expr mostLeftExpr) {
-            mOperands.clear();
-            mOperands.add(new Pair<Expr, LogicOp>(mostLeftExpr, null));
+            mExpression = mostLeftExpr.formalize();
         }
 
+        @NonNull
         @Override
-        public String toString() {
-            if (mOperands.size() == 0) {
-                throw new IllegalStateException();
-            }
-
-            // mOperands.get(0).first is a most mColumn operand,
-            // and mOperands.get(0).second must be a null object.
-            String expression = mOperands.get(0).first.toString();
-
-            for (Pair<Expr, LogicOp> pair : mOperands) {
-                expression = expression.concat(SPACE + pair.second.toString() + SPACE + pair.first.toString());
-            }
-
-            return toStringConsideringIsInBrancketAndNegation(expression);
+        public String formalize() {
+            return formalizeConsideringIsInBrancketAndNegation(mExpression);
         }
     }
 
@@ -179,15 +165,13 @@ public class SqliteWhere {
 
         @NonNull private String mColumn;
         @Nullable private String mCondition = null;
-        @Nullable private CondOp mOperator = null;
 
         public CondExpr(@NonNull String column) {
             mColumn = column;
         }
 
         private <T> CondExpr join(@NonNull T right, @NonNull CondOp operator) {
-            mCondition = right.toString();
-            mOperator = operator;
+            mCondition = operator.toString() + SPACE + right.toString();
             return this;
         }
 
@@ -215,17 +199,16 @@ public class SqliteWhere {
             return join(right, CondOp.NEQ);
         }
 
-        public CondExpr reset(@NonNull String left) {
-            mColumn = left;
-            mOperator = null;
-            return this;
+        public void setColumn(@NonNull String column) {
+            mColumn = column;
         }
 
+        @NonNull
         @Override
-        public String toString() {
-            if (this.mCondition != null && this.mOperator != null) {
-                String expression = this.mColumn + SPACE + this.mOperator.toString() + SPACE + this.mCondition;
-                return toStringConsideringIsInBrancketAndNegation(expression);
+        public String formalize() {
+            if (this.mCondition != null) {
+                String expression = this.mColumn + SPACE + this.mCondition;
+                return formalizeConsideringIsInBrancketAndNegation(expression);
             }
             throw new IllegalStateException("Syntax error");
         }
@@ -257,11 +240,12 @@ public class SqliteWhere {
             return this;
         }
 
+        @NonNull
         @Override
-        public String toString() {
+        public String formalize() {
             if (mMin != null && mMax != null) {
                 String expression = mColumn + " BETWEEN " + mMin + " AND " + mMax;
-                return toStringConsideringIsInBrancketAndNegation(expression);
+                return formalizeConsideringIsInBrancketAndNegation(expression);
             }
             throw new IllegalStateException("Syntax error");
         }
@@ -284,29 +268,22 @@ public class SqliteWhere {
             mRegex = regex;
         }
 
-        @NonNull
-        public String getRegex() {
-            return mRegex;
-        }
-
-        public void setRegex(@NonNull String regex) {
+        public LikeExpr setRegex(@NonNull String regex) {
             mRegex = regex;
+            return this;
+        }
+
+        public LikeExpr setColumn(@NonNull String column) {
+            mColumn = column;
+            return this;
         }
 
         @NonNull
-        public String getColumn() {
-            return mColumn;
-        }
-
-        public void setColumn(@NonNull String column) {
-            mColumn = column;
-        }
-
         @Override
-        public String toString() {
+        public String formalize() {
             if (mRegex != null) {
                 String expression = mColumn + " LIKE " + mRegex;
-                return toStringConsideringIsInBrancketAndNegation(expression);
+                return formalizeConsideringIsInBrancketAndNegation(expression);
             }
             throw new IllegalStateException("Syntax error");
         }
@@ -318,11 +295,11 @@ public class SqliteWhere {
     public static class InExpr extends Expr {
 
         @NonNull private String mColumn;
-        private ArrayList<String> mArgs;
+        @Nullable private String mArgs;
 
         public InExpr(@NonNull String column) {
             mColumn = column;
-            mArgs = new ArrayList<>();
+            mArgs = null;
         }
 
         @SafeVarargs
@@ -332,7 +309,7 @@ public class SqliteWhere {
         }
 
         public void resetArgs() {
-            mArgs.clear();
+            mArgs = null;
         }
 
         @SafeVarargs
@@ -342,26 +319,31 @@ public class SqliteWhere {
         }
 
         @SafeVarargs
-        final public <T> void addArgs(@NonNull T... args) {
-            for (T arg : args) {
-                mArgs.add(arg.toString());
+        final public <T> InExpr addArgs(@NonNull T... args) {
+            if (args.length != 0) {
+                String commaSep = ",";
+                String newArgs = TextUtils.join(commaSep, args);
+                if (mArgs != null) {
+                    mArgs = mArgs.concat(commaSep + newArgs);
+                } else {
+                    mArgs = newArgs;
+                }
             }
+
+            return this;
+        }
+
+        public InExpr setColumn(@NonNull String column) {
+            mColumn = column;
+            return this;
         }
 
         @NonNull
-        public String getColumn() {
-            return mColumn;
-        }
-
-        public void setColumn(@NonNull String column) {
-            mColumn = column;
-        }
-
         @Override
-        public String toString() {
-            if (1 <= mArgs.size()) {
-                String expression = mColumn + " IN(" + TextUtils.join(",", mArgs) + ")";
-                return toStringConsideringIsInBrancketAndNegation(expression);
+        public String formalize() {
+            if (mArgs != null) {
+                String expression = mColumn + " IN(" + mArgs + ")";
+                return formalizeConsideringIsInBrancketAndNegation(expression);
             }
             throw new IllegalArgumentException("Syntax error");
         }
@@ -378,17 +360,14 @@ public class SqliteWhere {
             mColumn = column;
         }
 
-        @NonNull
-        public String getColumn() {
-            return mColumn;
-        }
-
-        public void setColumn(@NonNull String column) {
+        public IsNullExpr setColumn(@NonNull String column) {
             mColumn = column;
+            return this;
         }
 
+        @NonNull
         @Override
-        public String toString() {
+        public String formalize() {
             String expression;
             if (isNegation()) {
                 expression = mColumn + " IS NOT NULL";
