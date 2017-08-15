@@ -1,7 +1,9 @@
 package d.candy.f.com.ralgo.infra.entry_package;
 
 import android.content.ContentValues;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 
 import java.util.Set;
 
@@ -49,6 +51,24 @@ public class SqlEntryPackage {
 
     public SqlEntryPackage put(@NonNull String columnName, String value) {
         mColumnData.put(columnName, value);
+        return this;
+    }
+
+    public SqlEntryPackage putRecognizableObjectOrThrow(@NonNull String columnName, Object value) {
+        if (value instanceof Integer) {
+            put(columnName, (Integer) value);
+        } else if (value instanceof Long) {
+            put(columnName, (Long) value);
+        } else if (value instanceof Float) {
+            put(columnName, (Float) value);
+        } else if (value instanceof Boolean) {
+            put(columnName, (Boolean) value);
+        } else if (value instanceof String) {
+            put(columnName, (String) value);
+        } else {
+            throw new ClassCastException("Unrecognizable type of the object");
+        }
+
         return this;
     }
 

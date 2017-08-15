@@ -2,7 +2,9 @@ package d.candy.f.com.ralgo.infra;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
@@ -280,10 +282,44 @@ public class SqliteAndSharedPrefRepository implements Repository {
         return null;
     }
 
-    // TODO: 8/14/17 #4 Implement
     @Override
-    public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery sqliteQuery) {
-        return null;
+    public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery query) {
+
+        ArrayList<SqlEntryPackage> results = new ArrayList<>();
+        DbOpenHelper openHelper = new DbOpenHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(
+                query.distinct(),
+                query.tables(),
+                query.columns(),
+                query.selection(),
+                query.selectionArgs(),
+                query.groupBy(),
+                query.having(),
+                query.orderBy(),
+                query.limit());
+
+        String[] columns = query.columns();
+        if (columns == null) {
+            columns = cursor.getColumnNames();
+        }
+
+        boolean isEOF = cursor.moveToFirst();
+        Bundle extras;
+        SqlEntryPackage entryPackage;
+        while (isEOF) {
+            extras = cursor.getExtras();
+            entryPackage = new SqlEntryPackage();
+            for (String column : columns) {
+                entryPackage.putRecognizableObjectOrThrow(column, extras.get(column));
+            }
+
+            results.add(entryPackage);
+            isEOF = cursor.moveToNext();
+        }
+
+        cursor.close();
+        return results;
     }
 
     /**
@@ -296,7 +332,6 @@ public class SqliteAndSharedPrefRepository implements Repository {
         if (entryPackage.getEntryId() == DbContract.NULL_ENTRY_ID) {
             return false;
         }
-
 
         return true;
     }
