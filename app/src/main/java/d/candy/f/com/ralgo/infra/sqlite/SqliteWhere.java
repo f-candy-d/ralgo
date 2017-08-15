@@ -13,8 +13,8 @@ public class SqliteWhere {
     /**
      * The super class of expression classes
      */
-    abstract static class Expr {
-        protected static final String SPACE = " ";
+    abstract public static class Expr {
+        static final String SPACE = " ";
         private boolean mNegation = false;
         private boolean mIsInBrancket = false;
 
@@ -37,7 +37,7 @@ public class SqliteWhere {
         }
 
         @NonNull
-        protected String formalizeConsideringIsInBrancketAndNegation(@NonNull String baseExpression) {
+        String formalizeConsideringIsInBrancketAndNegation(@NonNull String baseExpression) {
             if (isNegation()) {
                 baseExpression = "NOT " + baseExpression;
             }

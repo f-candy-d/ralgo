@@ -8,6 +8,7 @@ import java.util.Collection;
 import d.candy.f.com.ralgo.infra.entry_package.ConfigEntryPackage;
 import d.candy.f.com.ralgo.infra.entry_package.SqlEntryPackage;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteWhere;
 
 /**
  * Created by daichi on 17/08/14.
@@ -55,7 +56,7 @@ public interface Repository {
      * region; Update sql entry
      */
     boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull String idColumnName);
-    int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteQuery condition);
+    int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteWhere.Expr condition);
 
     /**
      * region; Delete sql entry

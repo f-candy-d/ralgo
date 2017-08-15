@@ -333,14 +333,20 @@ public class SqliteAndSharedPrefRepository implements Repository {
         SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
 
         final int affected = sqLiteDatabase.update(tableName, entryPackage.toContentValues(), idIs.formalize(), null);
+        sqLiteDatabase.close();
 
         return (affected != 0);
     }
 
-    // TODO: 8/14/17 #6 Implement
     @Override
-    public int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteQuery condition) {
-        return 0;
+    public int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteWhere.Expr condition) {
+        DbOpenHelper openHelper = new DbOpenHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
+
+        final int affected = sqLiteDatabase.update(tableName, entryPackage.toContentValues(), condition.formalize(), null);
+        sqLiteDatabase.close();
+
+        return affected;
     }
 
     /**
