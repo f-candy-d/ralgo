@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import d.candy.f.com.ralgo.infra.RepositoryDefault;
+import d.candy.f.com.ralgo.infra.RepositoryDefaults;
 
 /**
  * Created by daichi on 8/14/17.
@@ -26,11 +26,11 @@ public class ConfigEntryPackage {
     /**
      * Default values
      */
-    private boolean mDefaultBoolean = RepositoryDefault.DEFAULT_BOOLEAN;
-    private float mDefaultFloat = RepositoryDefault.DEFAULT_FLOAT;
-    private long mDefaultLong = RepositoryDefault.DEFAULT_LONG;
-    private int mDefaultInt = RepositoryDefault.DEFAULT_INT;
-    private String mDefaultString = RepositoryDefault.DEFAULT_STRING;
+    private boolean mDefaultBoolean = RepositoryDefaults.DEFAULT_BOOLEAN;
+    private float mDefaultFloat = RepositoryDefaults.DEFAULT_FLOAT;
+    private long mDefaultLong = RepositoryDefaults.DEFAULT_LONG;
+    private int mDefaultInt = RepositoryDefaults.DEFAULT_INT;
+    private String mDefaultString = RepositoryDefaults.DEFAULT_STRING;
 
     public ConfigEntryPackage() {}
 

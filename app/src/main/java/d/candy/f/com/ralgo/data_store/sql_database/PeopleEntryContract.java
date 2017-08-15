@@ -1,6 +1,6 @@
 package d.candy.f.com.ralgo.data_store.sql_database;
 
-import d.candy.f.com.ralgo.infra.sqlite.SqlTableCreator;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteTableUtils;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteDataType;
 
 /**
@@ -18,8 +18,8 @@ public class PeopleEntryContract {
     public static final String COL_MAIL = PREFIX + "mail";
     public static final String COL_TEL = PREFIX + "tel";
 
-    public static SqlTableCreator.Source getTableCreatorSourse() {
-        return new SqlTableCreator.Source(TABLE_NAME)
+    public static SqliteTableUtils.TableSource getTableCreatorSourse() {
+        return new SqliteTableUtils.TableSource(TABLE_NAME)
                 .put(COL_ID, SqliteDataType.INTEGER_PK, false)
                 .put(COL_NAME, SqliteDataType.TEXT, false)
                 .put(COL_NOTE, SqliteDataType.TEXT, true)

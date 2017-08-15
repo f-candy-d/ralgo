@@ -1,6 +1,6 @@
 package d.candy.f.com.ralgo.data_store.sql_database;
 
-import d.candy.f.com.ralgo.infra.sqlite.SqlTableCreator;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteTableUtils;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteDataType;
 
 /**
@@ -16,8 +16,8 @@ public class ThingEntryContract {
     public static final String COL_EMBODIER_ID = PREFIX + "embodier_id";
     public static final String COL_TABLE_OF_EMBODIER = PREFIX + "table_of_embodier";
 
-    public static SqlTableCreator.Source getTableCreatorSourse() {
-        return new SqlTableCreator.Source(TABLE_NAME)
+    public static SqliteTableUtils.TableSource getTableCreatorSourse() {
+        return new SqliteTableUtils.TableSource(TABLE_NAME)
                 .put(COL_ID, SqliteDataType.INTEGER_PK, false)
                 .put(COL_EMBODIER_ID, SqliteDataType.INTEGER, false)
                 .put(COL_TABLE_OF_EMBODIER, SqliteDataType.TEXT, false);

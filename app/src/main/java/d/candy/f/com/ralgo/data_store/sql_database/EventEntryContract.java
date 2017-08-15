@@ -1,6 +1,6 @@
 package d.candy.f.com.ralgo.data_store.sql_database;
 
-import d.candy.f.com.ralgo.infra.sqlite.SqlTableCreator;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteTableUtils;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteDataType;
 
 /**
@@ -19,8 +19,8 @@ public class EventEntryContract {
     public static final String COL_REPETITION = PREFIX + "repetition";
     public static final String COL_NOTE = PREFIX + "note";
     
-    public static SqlTableCreator.Source getTableCreatorSourse() {
-        return new SqlTableCreator.Source(TABLE_NAME)
+    public static SqliteTableUtils.TableSource getTableCreatorSourse() {
+        return new SqliteTableUtils.TableSource(TABLE_NAME)
                 .put(COL_ID, SqliteDataType.INTEGER_PK, false)
                 .put(COL_THING_ID, SqliteDataType.INTEGER, false)
                 .put(COL_START_DATE, SqliteDataType.INTEGER, false)

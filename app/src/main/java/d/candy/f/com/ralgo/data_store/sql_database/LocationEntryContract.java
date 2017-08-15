@@ -1,10 +1,6 @@
 package d.candy.f.com.ralgo.data_store.sql_database;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import d.candy.f.com.ralgo.infra.sqlite.SqlTableCreator;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteTableUtils;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteDataType;
 
 /**
@@ -20,8 +16,8 @@ public class LocationEntryContract {
     public static final String COL_NAME = PREFIX + "name";
     public static final String COL_NOTE = PREFIX + "note";
 
-    public static SqlTableCreator.Source getTableCreatorSourse() {
-        return new SqlTableCreator.Source(TABLE_NAME)
+    public static SqliteTableUtils.TableSource getTableCreatorSourse() {
+        return new SqliteTableUtils.TableSource(TABLE_NAME)
                 .put(COL_ID, SqliteDataType.INTEGER_PK, false)
                 .put(COL_NAME, SqliteDataType.TEXT, false)
                 .put(COL_NOTE, SqliteDataType.TEXT, true);

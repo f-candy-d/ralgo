@@ -2,6 +2,7 @@ package d.candy.f.com.ralgo.infra;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
@@ -9,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
+import d.candy.f.com.ralgo.data_store.sql_database.DbOpenHelper;
 import d.candy.f.com.ralgo.infra.entry_package.ConfigEntryPackage;
 import d.candy.f.com.ralgo.infra.entry_package.SqlEntryPackage;
 import d.candy.f.com.ralgo.infra.sqlite.SqlQuery;
@@ -124,7 +127,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public int loadConfigValueAsInt(@NonNull String key) {
-        return loadConfigValueAsIntOrDefault(key, RepositoryDefault.DEFAULT_INT);
+        return loadConfigValueAsIntOrDefault(key, RepositoryDefaults.DEFAULT_INT);
     }
 
     @Override
@@ -135,7 +138,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public long loadConfigValueAsLong(@NonNull String key) {
-        return loadConfigValueAsLongOrDefault(key, RepositoryDefault.DEFAULT_LONG);
+        return loadConfigValueAsLongOrDefault(key, RepositoryDefaults.DEFAULT_LONG);
     }
 
     @Override
@@ -146,7 +149,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public float loadConfigValueAsFloat(@NonNull String key) {
-        return loadConfigValueAsFloatOrDefault(key, RepositoryDefault.DEFAULT_FLOAT);
+        return loadConfigValueAsFloatOrDefault(key, RepositoryDefaults.DEFAULT_FLOAT);
     }
 
     @Override
@@ -157,7 +160,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public String loadConfigValueAsString(@NonNull String key) {
-        return loadConfigValueAsStringOrDefault(key, RepositoryDefault.DEFAULT_STRING);
+        return loadConfigValueAsStringOrDefault(key, RepositoryDefaults.DEFAULT_STRING);
     }
 
     @Override
@@ -168,7 +171,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public boolean loadConfigValueAsBoolean(@NonNull String key) {
-        return loadConfigValueAsBooleanOrDefault(key, RepositoryDefault.DEFAULT_BOOLEAN);
+        return loadConfigValueAsBooleanOrDefault(key, RepositoryDefaults.DEFAULT_BOOLEAN);
     }
 
     @Override
@@ -231,16 +234,40 @@ public class SqliteAndSharedPrefRepository implements Repository {
      * region; Save data to SQLite
      */
 
-    // TODO: 8/14/17 #1 Implement
     @Override
     public long saveSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage) {
-        return 0;
+        DbOpenHelper openHelper = new DbOpenHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
+        final long id = sqLiteDatabase.insert(tableName, null, entryPackage.toContentValues());
+
+        // SQLiteDatabase#insert() method returns the row ID of the newly inserted row, or -1 if an error occurred.
+        // See document -> https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)
+        return (id != -1) ? id : DbContract.NULL_ENTRY_ID;
     }
 
-    // TODO: 8/14/17 #2 Implement
     @Override
     public long[] saveSqlEntries(@NonNull String tableName, @NonNull Collection<SqlEntryPackage> entryPackages) {
-        return new long[0];
+        final long[] ids = new long[entryPackages.size()];
+        DbOpenHelper openHelper = new DbOpenHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
+        int index = 0;
+
+        sqLiteDatabase.beginTransaction();
+        try {
+            for (SqlEntryPackage entry : entryPackages) {
+                final long id = sqLiteDatabase.insert(tableName, null, entry.toContentValues());
+                // SQLiteDatabase#insert() method returns the row ID of the newly inserted row, or -1 if an error occurred.
+                // See document -> https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)
+                ids[index] = (id != -1) ? id : DbContract.NULL_ENTRY_ID;
+                ++index;
+            }
+            sqLiteDatabase.setTransactionSuccessful();
+
+        } finally {
+            sqLiteDatabase.endTransaction();
+        }
+
+        return ids;
     }
 
     /**

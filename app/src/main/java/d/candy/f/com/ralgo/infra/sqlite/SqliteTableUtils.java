@@ -13,18 +13,18 @@ import java.util.Set;
  * Created by daichi on 8/15/17.
  */
 
-public class SqlTableCreator {
+public class SqliteTableUtils {
 
-    public static class Source {
+    public static class TableSource {
         // key -> columnName | value -> {dataType, isNullable}
         @NonNull private Map<String, Pair<SqliteDataType, Boolean>> mPairMap;
         @NonNull private String mTableName;
 
-        public Source(@NonNull String tableName) {
+        public TableSource(@NonNull String tableName) {
             this(tableName, -1);
         }
 
-        public Source(@NonNull String tableName, int capacity) {
+        public TableSource(@NonNull String tableName, int capacity) {
             if (capacity < 0) {
                 mPairMap = new HashMap<>();
             } else {
@@ -33,7 +33,7 @@ public class SqlTableCreator {
             mTableName = tableName;
         }
 
-        public Source put(@NonNull String column, @NonNull SqliteDataType dataType, boolean isNullable) {
+        public TableSource put(@NonNull String column, @NonNull SqliteDataType dataType, boolean isNullable) {
             mPairMap.put(column, new Pair<>(dataType, isNullable));
             return this;
         }
@@ -52,7 +52,9 @@ public class SqlTableCreator {
         }
     }
 
-    public static boolean createFromSourse(@NonNull SQLiteDatabase database, @NonNull Source source) {
+    private SqliteTableUtils() {}
+
+    public static boolean createTable(@NonNull SQLiteDatabase database, @NonNull TableSource source) {
         if (!database.isOpen() || database.isReadOnly()) {
             return false;
         }
@@ -79,6 +81,26 @@ public class SqlTableCreator {
         sqlCreate = sqlCreate.concat(");");
 
         database.execSQL(sqlCreate);
+        return true;
+    }
+
+    public static boolean deleteTable(@NonNull SQLiteDatabase sqLiteDatabase, @NonNull String tableName) {
+        if (!sqLiteDatabase.isOpen() || sqLiteDatabase.isReadOnly()) {
+            return false;
+        }
+
+        final String sqlDropTable = "DROP TABLE IF EXISTS ";
+        sqLiteDatabase.execSQL(sqlDropTable + tableName);
+        return true;
+    }
+
+    public static boolean resetTable(@NonNull SQLiteDatabase sqLiteDatabase, @NonNull TableSource source) {
+        if (!sqLiteDatabase.isOpen() || sqLiteDatabase.isReadOnly()) {
+            return false;
+        }
+
+        deleteTable(sqLiteDatabase, source.getTableName());
+        createTable(sqLiteDatabase, source);
         return true;
     }
 }
