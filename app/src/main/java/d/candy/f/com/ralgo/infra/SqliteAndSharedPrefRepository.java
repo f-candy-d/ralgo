@@ -239,9 +239,9 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public long saveSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage) {
-        DbOpenHelper openHelper = new DbOpenHelper(mContext);
-        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         final long id = sqLiteDatabase.insert(tableName, null, entryPackage.toContentValues());
+        sqLiteDatabase.close();
 
         // SQLiteDatabase#insert() method returns the row ID of the newly inserted row, or -1 if an error occurred.
         // See document -> https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)
@@ -251,8 +251,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     @Override
     public long[] saveSqlEntries(@NonNull String tableName, @NonNull Collection<SqlEntryPackage> entryPackages) {
         final long[] ids = new long[entryPackages.size()];
-        DbOpenHelper openHelper = new DbOpenHelper(mContext);
-        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         int index = 0;
 
         sqLiteDatabase.beginTransaction();
@@ -269,6 +268,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
         } finally {
             sqLiteDatabase.endTransaction();
         }
+        sqLiteDatabase.close();
 
         return ids;
     }
@@ -281,8 +281,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery query) {
 
         ArrayList<SqlEntryPackage> results = new ArrayList<>();
-        DbOpenHelper openHelper = new DbOpenHelper(mContext);
-        SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(
                 query.distinct(),
                 query.tables(),
@@ -293,6 +292,8 @@ public class SqliteAndSharedPrefRepository implements Repository {
                 query.having(),
                 query.orderBy(),
                 query.limit());
+
+        sqLiteDatabase.close();
 
         String[] columns = query.columns();
         if (columns == null) {
@@ -329,8 +330,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
         }
 
         SqliteWhere.CondExpr idIs = new SqliteWhere.CondExpr(idColumnName).equalTo(id);
-        DbOpenHelper openHelper = new DbOpenHelper(mContext);
-        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
 
         final int affected = sqLiteDatabase.update(tableName, entryPackage.toContentValues(), idIs.formalize(), null);
         sqLiteDatabase.close();
@@ -340,9 +340,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteWhere.Expr condition) {
-        DbOpenHelper openHelper = new DbOpenHelper(mContext);
-        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
-
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         final int affected = sqLiteDatabase.update(tableName, entryPackage.toContentValues(), condition.formalize(), null);
         sqLiteDatabase.close();
 
@@ -353,22 +351,41 @@ public class SqliteAndSharedPrefRepository implements Repository {
      * region; Delete data in SQLite
      */
 
-    // TODO: 8/14/17 #7 Implement
     @Override
-    public boolean deleteSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage) {
-        return false;
+    public boolean deleteSqlEntry(@NonNull String tableName, @NonNull String idColumnName, long id) {
+        SqliteWhere.CondExpr idIs = new SqliteWhere.CondExpr(idColumnName).equalTo(id);
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        final int affected = sqLiteDatabase.delete(tableName, idIs.formalize(), null);
+        sqLiteDatabase.close();
+
+        return (affected != 0);
     }
 
-    // TODO: 8/14/17 #8 Implement
     @Override
-    public int deleteSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqliteQuery condition) {
-        return 0;
+    public int deleteSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqliteWhere.Expr condition) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        final int affected = sqLiteDatabase.delete(tableName, condition.formalize(), null);
+        sqLiteDatabase.close();
+
+        return affected;
     }
 
     /**
      * Helper methods
      */
+
     private SharedPreferences getPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(mContext.getApplicationContext());
+    }
+
+    private SQLiteDatabase getWritableDatabase() {
+        DbOpenHelper openHelper = new DbOpenHelper(mContext);
+        return openHelper.getWritableDatabase();
+    }
+
+    private SQLiteDatabase getReadableDatabase() {
+        DbOpenHelper openHelper = new DbOpenHelper(mContext);
+        return openHelper.getReadableDatabase();
     }
 }

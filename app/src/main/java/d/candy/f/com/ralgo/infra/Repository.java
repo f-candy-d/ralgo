@@ -61,6 +61,6 @@ public interface Repository {
     /**
      * region; Delete sql entry
      */
-    boolean deleteSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage);
-    int deleteSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqliteQuery condition);
+    boolean deleteSqlEntry(@NonNull String tableName, @NonNull String idColumnName, long id);
+    int deleteSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqliteWhere.Expr condition);
 }
