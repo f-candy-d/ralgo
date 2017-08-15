@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 
 import java.util.Set;
 
+import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
+
 /**
  * Created by daichi on 8/14/17.
  *
@@ -14,9 +16,11 @@ import java.util.Set;
 public class SqlEntryPackage {
 
     @NonNull private ContentValues mColumnData;
+    private long mEntryId;
 
     public SqlEntryPackage() {
         mColumnData = new ContentValues();
+        mEntryId = DbContract.NULL_ENTRY_ID;
     }
 
     public ContentValues toContentValues() {
@@ -70,5 +74,13 @@ public class SqlEntryPackage {
 
     public Set<String> getColumnNames() {
         return mColumnData.keySet();
+    }
+
+    public long getEntryId() {
+        return mEntryId;
+    }
+
+    public void setEntryId(long entryId) {
+        mEntryId = entryId;
     }
 }

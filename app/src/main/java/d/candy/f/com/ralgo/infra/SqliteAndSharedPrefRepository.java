@@ -293,7 +293,12 @@ public class SqliteAndSharedPrefRepository implements Repository {
     // TODO: 8/14/17 #5 Implement
     @Override
     public boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage) {
-        return false;
+        if (entryPackage.getEntryId() == DbContract.NULL_ENTRY_ID) {
+            return false;
+        }
+
+
+        return true;
     }
 
     // TODO: 8/14/17 #6 Implement
