@@ -13,6 +13,7 @@ import java.util.Arrays;
  */
 
 public class SqliteWhere {
+
     /**
      * The super class of expression classes
      */
