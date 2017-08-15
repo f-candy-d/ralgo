@@ -14,7 +14,7 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 import d.candy.f.com.ralgo.data_store.sql_database.DbOpenHelper;
 import d.candy.f.com.ralgo.infra.entry_package.ConfigEntryPackage;
 import d.candy.f.com.ralgo.infra.entry_package.SqlEntryPackage;
-import d.candy.f.com.ralgo.infra.sqlite.SqlQuery;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
 
 /**
  * Created by daichi on 17/08/14.
@@ -282,7 +282,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     // TODO: 8/14/17 #4 Implement
     @Override
-    public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqlQuery sqlQuery) {
+    public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery sqliteQuery) {
         return null;
     }
 
@@ -303,7 +303,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     // TODO: 8/14/17 #6 Implement
     @Override
-    public int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqlQuery condition) {
+    public int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteQuery condition) {
         return 0;
     }
 
@@ -319,7 +319,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     // TODO: 8/14/17 #8 Implement
     @Override
-    public int deleteSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlQuery condition) {
+    public int deleteSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqliteQuery condition) {
         return 0;
     }
 
