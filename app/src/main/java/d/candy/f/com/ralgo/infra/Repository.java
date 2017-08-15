@@ -49,7 +49,6 @@ public interface Repository {
     /**
      * region; Load sql entry
      */
-    SqlEntryPackage loadSqlEntryForId(@NonNull String tableName, long id);
     ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery sqliteQuery);
 
     /**

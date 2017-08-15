@@ -17,6 +17,7 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbOpenHelper;
 import d.candy.f.com.ralgo.infra.entry_package.ConfigEntryPackage;
 import d.candy.f.com.ralgo.infra.entry_package.SqlEntryPackage;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteWhere;
 
 /**
  * Created by daichi on 17/08/14.
@@ -275,12 +276,6 @@ public class SqliteAndSharedPrefRepository implements Repository {
     /**
      * region; Load data from SQLite
      */
-
-    // TODO: 8/14/17 #3 Implement
-    @Override
-    public SqlEntryPackage loadSqlEntryForId(@NonNull String tableName, long id) {
-        return null;
-    }
 
     @Override
     public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery query) {
