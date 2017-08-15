@@ -8,6 +8,7 @@ import android.support.annotation.StringDef;
 import java.util.Set;
 
 import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
+import d.candy.f.com.ralgo.utils.Quantizable;
 
 /**
  * Created by daichi on 8/14/17.
@@ -52,6 +53,11 @@ public class SqlEntryPackage {
         return this;
     }
 
+    public SqlEntryPackage put(@NonNull String columnName, @NonNull Quantizable value) {
+        mColumnData.put(columnName, value.quantize());
+        return this;
+    }
+
     public SqlEntryPackage putRecognizableObjectOrThrow(@NonNull String columnName, Object value) {
         if (value instanceof Integer) {
             put(columnName, (Integer) value);
@@ -88,6 +94,11 @@ public class SqlEntryPackage {
 
     public String getAsString(@NonNull String columnName) {
         return mColumnData.getAsString(columnName);
+    }
+
+    public <T> T getAsQuantizable(@NonNull String columnName, @NonNull Quantizable.Converter<T> converter) {
+        final int quantity = mColumnData.getAsInteger(columnName);
+        return converter.convertFromQuantity(quantity);
     }
 
     public Set<String> getColumnNames() {

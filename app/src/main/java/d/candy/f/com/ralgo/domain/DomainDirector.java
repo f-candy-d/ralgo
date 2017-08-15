@@ -20,6 +20,6 @@ public class DomainDirector<E extends Enum<E>> {
 
     public DomainDirector(@NonNull Context context, @NonNull Class<E> keyClass) {
         mEServiceMap = new EnumMap<>(keyClass);
-        mRepository = new SqliteAndSharedPrefRepository();
+        mRepository = new SqliteAndSharedPrefRepository(context);
     }
 }
