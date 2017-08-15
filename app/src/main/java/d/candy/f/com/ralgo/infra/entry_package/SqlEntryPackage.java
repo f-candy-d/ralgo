@@ -18,11 +18,9 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 public class SqlEntryPackage {
 
     @NonNull private ContentValues mColumnData;
-    private long mEntryId;
 
     public SqlEntryPackage() {
         mColumnData = new ContentValues();
-        mEntryId = DbContract.NULL_ENTRY_ID;
     }
 
     public ContentValues toContentValues() {
@@ -96,11 +94,7 @@ public class SqlEntryPackage {
         return mColumnData.keySet();
     }
 
-    public long getEntryId() {
-        return mEntryId;
-    }
-
-    public void setEntryId(long entryId) {
-        mEntryId = entryId;
+    public boolean containsKey(@NonNull String key) {
+        return mColumnData.containsKey(key);
     }
 }

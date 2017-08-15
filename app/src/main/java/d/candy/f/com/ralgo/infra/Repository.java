@@ -54,7 +54,7 @@ public interface Repository {
     /**
      * region; Update sql entry
      */
-    boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage);
+    boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull String idColumnName);
     int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteQuery condition);
 
     /**

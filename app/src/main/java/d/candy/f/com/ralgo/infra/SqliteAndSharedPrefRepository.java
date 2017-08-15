@@ -321,14 +321,20 @@ public class SqliteAndSharedPrefRepository implements Repository {
      * region; Update data in SQLite
      */
 
-    // TODO: 8/14/17 #5 Implement
     @Override
-    public boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage) {
-        if (entryPackage.getEntryId() == DbContract.NULL_ENTRY_ID) {
+    public boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull String idColumnName) {
+        final long id;
+        if (!entryPackage.containsKey(idColumnName) || (id = entryPackage.getAsLong(idColumnName)) == DbContract.NULL_ENTRY_ID) {
             return false;
         }
 
-        return true;
+        SqliteWhere.CondExpr idIs = new SqliteWhere.CondExpr(idColumnName).equalTo(id);
+        DbOpenHelper openHelper = new DbOpenHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = openHelper.getWritableDatabase();
+
+        final int affected = sqLiteDatabase.update(tableName, entryPackage.toContentValues(), idIs.formalize(), null);
+
+        return (affected != 0);
     }
 
     // TODO: 8/14/17 #6 Implement
