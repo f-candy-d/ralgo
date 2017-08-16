@@ -2,8 +2,10 @@ package d.candy.f.com.ralgo.domain.structure;
 
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
+
+import d.candy.f.com.ralgo.utils.SortedArrayList;
 
 /**
  * Created by daichi on 8/16/17.
@@ -11,30 +13,106 @@ import java.util.Calendar;
 
 public class DaySchedule {
 
-    private static final long ILLEGAL_DATE = -1;
+    private final static Comparator<Event> EVENT_COMPARATOR =
+            new Comparator<Event>() {
+                @Override
+                public int compare(Event event, Event t1) {
+                    if (event.getStartDate() < t1.getStartDate()) {
+                        return -1;
+                    } else if (event.getStartDate() > t1.getStartDate()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            };
 
-    @NonNull private ArrayList<Event> mEvents;
-    private long mDate = ILLEGAL_DATE;
+    @NonNull private SortedArrayList<Event> mEvents;
+    private long mDate;
 
-    public DaySchedule() {
-        mEvents = new ArrayList<>();
+    public DaySchedule(long date) {
+        mEvents = new SortedArrayList<>(EVENT_COMPARATOR);
     }
 
     public long getDate() {
         return mDate;
     }
 
-    public void setDate(long date) {
+    public void changeDate(long date) {
+        if (mDate != date) {
+            mEvents.clear();
+        }
         mDate = date;
     }
 
     public Calendar getDateAsCalendar() {
-        if (mDate != ILLEGAL_DATE) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(mDate);
             return calendar;
+    }
+
+    public boolean addEvent(@NonNull Event event) {
+        if (isEventDatetimeValid(event)) {
+            mEvents.add(event);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isEventDatetimeValid(Event event) {
+        if (event == null) {
+            return false;
         }
 
-        throw new IllegalStateException("Plese set date!");
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(mDate);
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.MILLISECOND, 0);
+
+        Calendar eventDate = Calendar.getInstance();
+        eventDate.setTimeInMillis(event.getStartDate());
+        eventDate.set(Calendar.HOUR_OF_DAY, 0);
+        eventDate.set(Calendar.MINUTE, 0);
+        eventDate.set(Calendar.MILLISECOND, 0);
+
+        if (date.compareTo(eventDate) != 0) {
+            return false;
+        }
+
+        eventDate.setTimeInMillis(event.getEndDate());
+        eventDate.set(Calendar.HOUR_OF_DAY, 0);
+        eventDate.set(Calendar.MINUTE, 0);
+        eventDate.set(Calendar.MILLISECOND, 0);
+
+        return (date.compareTo(eventDate) == 0);
+    }
+
+    private void mergeAllBlocksIfPossible() {
+        Event iEvent;
+        Event jEvent;
+        MergeableEvent mergeableEvent;
+
+        for (int i = mEvents.size() - 1; 0 <= i; --i) {
+            iEvent = mEvents.get(i);
+            for (int j = i - 1; 0 <= j; --j) {
+                jEvent = mEvents.get(j);
+
+                if (jEvent instanceof MergeableEvent) {
+                    if (((MergeableEvent) jEvent).mergeWith(iEvent)) {
+                        mEvents.remove(i);
+                        break;
+                    }
+
+                } else {
+                    mergeableEvent = new MergeableEvent(jEvent, EVENT_COMPARATOR);
+                    if (mergeableEvent.mergeWith(iEvent)) {
+                        mEvents.set(j, mergeableEvent);
+                        mEvents.remove(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

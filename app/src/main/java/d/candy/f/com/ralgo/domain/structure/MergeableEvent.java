@@ -3,8 +3,9 @@ package d.candy.f.com.ralgo.domain.structure;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+
+import d.candy.f.com.ralgo.utils.SortedArrayList;
 
 /**
  * Created by daichi on 17/08/16.
@@ -12,72 +13,53 @@ import java.util.Comparator;
 
 public class MergeableEvent extends Event {
 
-    public enum EventSortOrder {
-        BY_START_DATE,
-        BY_END_DATE
+    private static final long DEFAULT_EARLIEST_DATETIME = Long.MIN_VALUE;
+    private static final long DEFAULT_LATEST_DATETIME = Long.MAX_VALUE;
+
+    @NonNull private SortedArrayList<Event> mEvents;
+
+    public MergeableEvent(@NonNull Event initialEvent, @NonNull Comparator<Event> comparator) {
+        mEvents  = new SortedArrayList<>(comparator);
+        mEvents.add(initialEvent);
+        setEarliestDatetime(initialEvent.getStartDate());
+        setLatestDatetime(initialEvent.getEndDate());
     }
 
-    private static final long DEFAULT_EARLIEST_DATE = Long.MIN_VALUE;
-    private static final long DEFAULT_LATEST_DATE = Long.MAX_VALUE;
-
-    @NonNull private ArrayList<Event> mEvents;
-    @NonNull private EventSortOrder mSortOrder;
-
-    public MergeableEvent(@NonNull EventSortOrder sortOrder) {
-        this(null, sortOrder);
-    }
-
-    public MergeableEvent(Event initialEvent, @NonNull EventSortOrder sortOrder) {
-        mSortOrder = sortOrder;
-        mEvents  = new ArrayList<>();
-
-        if (initialEvent != null) {
-            mEvents.add(initialEvent);
-            setEarliestDate(initialEvent.getStartDate());
-            setLatestDate(initialEvent.getEndDate());
-        }
-    }
-
-    public long getEarliestDate() {
+    public long getEarliestDatetime() {
         return getStartDate();
     }
 
-    public long getLatestDate() {
+    public long getLatestDatetime() {
         return getEndDate();
     }
 
-    public void setEarliestDate(long earliestDate) {
-        setStartDate(earliestDate);
+    public void setEarliestDatetime(long earliestDatetime) {
+        setStartDate(earliestDatetime);
     }
 
-    public void setLatestDate(long latestDate) {
-        setEndDate(latestDate);
+    public void setLatestDatetime(long latestDatetime) {
+        setEndDate(latestDatetime);
     }
 
-    @NonNull
-    public EventSortOrder getSortOrder() {
-        return mSortOrder;
-    }
-
-    public void setSortOrder(@NonNull EventSortOrder sortOrder) {
-        mSortOrder = sortOrder;
+    public void changeComparator(@NonNull Comparator<Event> comparator) {
+        mEvents.changeComparator(comparator);
     }
 
     @NonNull
     public ArrayList<Event> getEvents() {
-        return (ArrayList<Event>) Collections.unmodifiableList(mEvents);
+        return mEvents.asUnmodifiableArrayList();
     }
 
     public Event removeEvent(int index) {
         final Event removed = mEvents.remove(index);
         // Update dates
         if (mEvents.size() != 0) {
-            setEarliestDate(mEvents.get(0).getStartDate());
-            setLatestDate(mEvents.get(mEvents.size() - 1).getEndDate());
+            setEarliestDatetime(findEarliestDatetime());
+            setLatestDatetime(findLatestDatetime());
 
         } else {
-            setEarliestDate(DEFAULT_EARLIEST_DATE);
-            setLatestDate(DEFAULT_LATEST_DATE);
+            setEarliestDatetime(DEFAULT_EARLIEST_DATETIME);
+            setLatestDatetime(DEFAULT_LATEST_DATETIME);
         }
 
         return removed;
@@ -87,14 +69,8 @@ public class MergeableEvent extends Event {
         return mEvents.size();
     }
 
-    public Event mergeWith(@NonNull Event other) {
-        final long earliest = getEarliestDate();
-        final long latest = getLatestDate();
-        final long start = other.getStartDate();
-        final long end = other.getEndDate();
-
-        if (earliest <= start && start < latest ||
-                earliest < end && end <= latest) {
+    public boolean mergeWith(@NonNull Event other) {
+        if (isEventsMergeable(this, other)) {
 
             if (other instanceof MergeableEvent) {
                 mEvents.addAll(((MergeableEvent) other).getEvents());
@@ -102,42 +78,55 @@ public class MergeableEvent extends Event {
                 mEvents.add(other);
             }
 
-            sortInAsendingOrder();
             // Update dates
-            setEarliestDate((earliest < start) ? earliest : start);
-            setLatestDate((end < latest) ? latest  : earliest);
+            final long earliest = getEarliestDatetime();
+            final long latest = getLatestDatetime();
+            final long start = other.getStartDate();
+            final long end = other.getEndDate();
+            setEarliestDatetime((earliest < start) ? earliest : start);
+            setLatestDatetime((end < latest) ? latest  : earliest);
 
-            return null;
+            return true;
         }
 
-        // If merge failed, return again
-        return other;
+        // If merge failed, return false
+        return false;
     }
 
-    public void sortInAsendingOrder() {
-        final Comparator<Event> eventComparator =
-                new Comparator<Event>() {
-                    @Override
-                    public int compare(Event eve1, Event eve2) {
-                        final long arg1, arg2;
-                        if (mSortOrder == EventSortOrder.BY_START_DATE) {
-                            arg1 = eve1.getStartDate();
-                            arg2 = eve2.getStartDate();
-                        } else {
-                            arg1 = eve1.getEndDate();
-                            arg2 = eve2.getEndDate();
-                        }
+    /**
+     * Return true if possible to merge event2 into event1, false otherwise
+     */
+    private boolean isEventsMergeable(@NonNull Event event1, @NonNull Event event2) {
+        final long start1 = event1.getStartDate();
+        final long end1 = event1.getEndDate();
+        final long start2 = event2.getStartDate();
+        final long end2 = event2.getEndDate();
 
-                        if (arg1 < arg2) {
-                            return -1;
-                        } else if (arg2 > arg1) {
-                            return 1;
-                        } else {
-                            return 0;
-                        }
-                    }
-                };
+        return (start1 <= start2 && start2 < start1 ||
+                end2 < end1 && end1 <= end2);
+    }
 
-        Collections.sort(mEvents, eventComparator);
+    private long findEarliestDatetime() {
+        if (mEvents.size() == 0) {
+            return DEFAULT_EARLIEST_DATETIME;
+        }
+
+        long earliest = DEFAULT_LATEST_DATETIME;
+        for (Event event : mEvents) {
+            earliest = Math.min(earliest, event.getStartDate());
+        }
+        return earliest;
+    }
+
+    private long findLatestDatetime() {
+        if (mEvents.size() == 0) {
+            return DEFAULT_LATEST_DATETIME;
+        }
+
+        long latest = DEFAULT_EARLIEST_DATETIME;
+        for (Event event : mEvents) {
+            latest = Math.max(latest, event.getEndDate());
+        }
+        return latest;
     }
 }
