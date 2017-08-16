@@ -41,6 +41,7 @@ public class MainContentsActivity extends AppCompatActivity
         Calendar endOfDay = day.getStartOfNextDay();
         Log.d("mylog", "start of day -> " + DateFormat.format("yyyy/MM/dd, E, kk:mm:ss", startOfDay));
         Log.d("mylog", "end of day -> " + DateFormat.format("yyyy/MM/dd, E, kk:mm:ss", endOfDay));
+        Log.d("mylog", "is on same day -> " + String.valueOf(day.isOnSameDay(Calendar.getInstance().getTimeInMillis())));
     }
 
     @Override

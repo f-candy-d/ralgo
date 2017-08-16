@@ -22,9 +22,9 @@ public class Day {
         mDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
     }
 
-    public Day(long datetimeInMillis) {
+    public Day(long timeInMillis) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(datetimeInMillis);
+        calendar.setTimeInMillis(timeInMillis);
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
         mDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
@@ -69,6 +69,10 @@ public class Day {
         final long startOfNextDay = getStartOfNextDay().getTimeInMillis();
 
         return (startOfDay <= timeInMillis && timeInMillis < startOfNextDay);
+    }
+
+    public boolean isOnSameDay(@NonNull Calendar calendar) {
+        return isOnSameDay(calendar.getTimeInMillis());
     }
 
     @Override
