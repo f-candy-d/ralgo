@@ -32,6 +32,5 @@ public class DayScheduleService extends Service implements RepositoryUser {
 
     private void initDaySchedule(long date) {
         mDaySchedule.changeDate(date);
-
     }
 }

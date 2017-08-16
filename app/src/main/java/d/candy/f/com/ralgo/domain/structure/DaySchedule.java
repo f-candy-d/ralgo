@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.Calendar;
 import java.util.Comparator;
 
+import d.candy.f.com.ralgo.utils.Day;
 import d.candy.f.com.ralgo.utils.SortedArrayList;
 
 /**
@@ -68,22 +69,9 @@ public class DaySchedule {
             return false;
         }
 
-        Calendar date = Calendar.getInstance();
-        date.setTimeInMillis(mDate);
-        setCalendarTimeZero(date);
-
-        Calendar eventDate = Calendar.getInstance();
-        eventDate.setTimeInMillis(event.getStartDatetime());
-        setCalendarTimeZero(eventDate);
-
-        if (date.compareTo(eventDate) != 0) {
-            return false;
-        }
-
-        eventDate.setTimeInMillis(event.getEndDatetime());
-        setCalendarTimeZero(eventDate);
-
-        return (date.compareTo(eventDate) == 0);
+        Day day = new Day(mDate);
+        return (day.isOnSameDay(event.getStartDatetime())
+                && day.isOnSameDay(event.getEndDatetime()));
     }
 
     public void mergeAllBlocksIfPossible() {

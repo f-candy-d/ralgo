@@ -1,5 +1,6 @@
 package d.candy.f.com.ralgo.domain.structure;
 
+import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 import d.candy.f.com.ralgo.utils.Quantizable;
 
 /**
@@ -15,12 +16,21 @@ public class Event extends Thing {
         CUSTOM {@Override public int quantize() { return 3;}}
     }
 
-
     private long mId;
     private long mContentThingId;
     private long mStartDatetime;
     private long mEndDatetime;
     private String mNote;
+    private Repetition mRepetition;
+
+    public Event() {
+        mId = DbContract.NULL_ID;
+        mContentThingId = DbContract.NULL_ID;
+        mStartDatetime = -1;
+        mEndDatetime = -1;
+        mNote = null;
+        mRepetition = null;
+    }
 
     public long getId() {
         return mId;
@@ -60,5 +70,13 @@ public class Event extends Thing {
 
     public void setNote(String note) {
         mNote = note;
+    }
+
+    public Repetition getRepetition() {
+        return mRepetition;
+    }
+
+    public void setRepetition(Repetition repetition) {
+        mRepetition = repetition;
     }
 }

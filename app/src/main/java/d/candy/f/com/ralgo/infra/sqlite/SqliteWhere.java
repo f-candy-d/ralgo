@@ -222,6 +222,8 @@ public class SqliteWhere {
         @NonNull private String mColumn;
         private String mMin;
         private String mMax;
+        private boolean mExcludeBoundaryOfMin = false;
+        private boolean mExcludeBoundaryOfMax = false;
 
         public BetweenExpr(@NonNull String column) {
             mColumn = column;
@@ -240,11 +242,31 @@ public class SqliteWhere {
             return this;
         }
 
+        public BetweenExpr setRangeBoundaries(boolean excludeMin, boolean excludeMax) {
+            mExcludeBoundaryOfMin = excludeMin;
+            mExcludeBoundaryOfMax = excludeMax;
+            return this;
+        }
+
         @NonNull
         @Override
         public String formalize() {
             if (mMin != null && mMax != null) {
-                String expression = mColumn + " BETWEEN " + mMin + " AND " + mMax;
+                String expression;
+                if (mExcludeBoundaryOfMin || mExcludeBoundaryOfMax) {
+                    CondExpr condMin = (mExcludeBoundaryOfMin)
+                            ? new CondExpr(mColumn).graterThan(mMin)
+                            : new CondExpr(mColumn).graterThanOrEqualTo(mMin);
+
+                    CondExpr condMan = (mExcludeBoundaryOfMax)
+                            ? new CondExpr(mColumn).lessThan(mMax)
+                            : new CondExpr(mColumn).lessThanOrEqualTo(mMax);
+
+                    expression = new LogicExpr(condMin).and(condMan).formalize();
+
+                } else {
+                    expression = mColumn + " BETWEEN " + mMin + " AND " + mMax;
+                }
                 return formalizeConsideringIsInBrancketAndNegation(expression);
             }
             throw new IllegalStateException("Syntax error");
