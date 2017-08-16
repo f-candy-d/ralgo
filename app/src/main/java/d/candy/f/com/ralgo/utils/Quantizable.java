@@ -3,7 +3,7 @@ package d.candy.f.com.ralgo.utils;
 /**
  * Created by daichi on 17/08/15.
  *
- * USAGE:: In a class that implements Quantizable...
+ * USAGE:: In a class which implements Quantizable interface...
  *
  * <pre>
  *     public enum MrChildren implements Quantizable {

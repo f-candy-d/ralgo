@@ -22,23 +22,7 @@ import d.candy.f.com.ralgo.utils.Quantizable;
 public class MainContentsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private enum RequestService implements Quantizable {
-
-        REQUEST_SERVICE;
-
-        public static final Quantizable.Converter<RequestService> CONVERTER =
-                new Converter<RequestService>() {
-                    @Override
-                    public RequestService convertFromQuantity(int quantity) {
-                        if (quantity == 111) return REQUEST_SERVICE;
-                        return null;
-                    }
-                };
-
-        @Override
-        public int quantize() {
-            return 111;
-        }
+    private enum RequestService {
     }
 
     private DomainDirector<RequestService> mDomainDirector;
@@ -49,12 +33,6 @@ public class MainContentsActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_contents);
         init();
         initUI();
-
-        SqlEntryPackage entryPackage = new SqlEntryPackage();
-        entryPackage.put("key_enum", RequestService.REQUEST_SERVICE);
-        Log.d("mylog", "Saved '" + RequestService.REQUEST_SERVICE.toString() + "' with key 'key_enum'");
-        RequestService result = entryPackage.getAsQuantizable("key_enum", RequestService.CONVERTER);
-        Log.d("mylog", "Loaded '" + result.toString() + "' from key 'key_enum'");
     }
 
     @Override
