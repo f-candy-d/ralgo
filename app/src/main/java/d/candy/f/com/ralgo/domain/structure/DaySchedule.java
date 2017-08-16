@@ -46,9 +46,9 @@ public class DaySchedule {
     }
 
     public Calendar getDateAsCalendar() {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(mDate);
-            return calendar;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(mDate);
+        return calendar;
     }
 
     public boolean addEvent(@NonNull Event event) {
@@ -57,6 +57,10 @@ public class DaySchedule {
             return true;
         }
         return false;
+    }
+
+    public Event removeEvent(int index) {
+        return mEvents.remove(index);
     }
 
     private boolean isEventDatetimeValid(Event event) {
@@ -82,7 +86,7 @@ public class DaySchedule {
         return (date.compareTo(eventDate) == 0);
     }
 
-    private void mergeAllBlocksIfPossible() {
+    public void mergeAllBlocksIfPossible() {
         Event iEvent;
         Event jEvent;
         MergeableEvent mergeableEvent;
