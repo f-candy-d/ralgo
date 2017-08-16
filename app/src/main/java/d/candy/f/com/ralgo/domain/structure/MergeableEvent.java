@@ -17,8 +17,8 @@ public class MergeableEvent extends Event {
         BY_END_DATE
     }
 
-    private static final long DEFAULT_EARLIEST_DATE = 0;
-    private static final long DEFAULT_LATEST_DATE = 0;
+    private static final long DEFAULT_EARLIEST_DATE = Long.MIN_VALUE;
+    private static final long DEFAULT_LATEST_DATE = Long.MAX_VALUE;
 
     @NonNull private ArrayList<Event> mEvents;
     @NonNull private EventSortOrder mSortOrder;
