@@ -10,6 +10,7 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 import d.candy.f.com.ralgo.data_store.sql_database.EventEntryContract;
 import d.candy.f.com.ralgo.domain.RepositoryUser;
 import d.candy.f.com.ralgo.domain.structure.Event;
+import d.candy.f.com.ralgo.domain.structure.Thing;
 import d.candy.f.com.ralgo.infra.Repository;
 import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
@@ -71,8 +72,19 @@ public class EventEntryRWService extends Service implements RepositoryUser {
         ArrayList<SqlEntryPackage> results = mRepository.loadSqlEntries(query);
 
         ArrayList<Event> events = new ArrayList<>(results.size());
+        ThingEntryRWService thingEntryRWService = new ThingEntryRWService();
+        thingEntryRWService.setRepository(mRepository);
+        Event event;
+        Thing thing;
         for (SqlEntryPackage entryPackage : results) {
-            events.add(convertEntryPackageToEvent(entryPackage));
+            event = convertEntryPackageToEvent(entryPackage);
+            // Read the Thing entry data for the readed Event entry
+            thing = thingEntryRWService.readThingForEmbodierId(event.getEmbodierId());
+            if (thing != null) {
+                event.setThingId(thing.getThingId());
+                event.setEmbodierId(thing.getEmbodierId());
+                event.setTableOfEmbodier(thing.getTableOfEmbodier());
+            }
         }
 
         return events;
@@ -97,6 +109,16 @@ public class EventEntryRWService extends Service implements RepositoryUser {
             return DbContract.NULL_ID;
         }
 
+        // Save Thing entry data
+        ThingEntryRWService thingEntryRWService = new ThingEntryRWService();
+        thingEntryRWService.setRepository(mRepository);
+        final long thingId = thingEntryRWService.writeThing(event);
+        if (thingId == DbContract.NULL_ID) {
+            return DbContract.NULL_ID;
+        }
+        event.setThingId(thingId);
+
+        // Save Event entry data
         SqlEntryPackage entryPackage = convertEventToEntryPackage(event, false);
         return mRepository.saveSqlEntry(EventEntryContract.TABLE_NAME, entryPackage);
     }
@@ -109,6 +131,15 @@ public class EventEntryRWService extends Service implements RepositoryUser {
             return false;
         }
 
+        // Save Thing entry data
+        ThingEntryRWService thingEntryRWService = new ThingEntryRWService();
+        thingEntryRWService.setRepository(mRepository);
+        final long thingId = thingEntryRWService.writeThing(event);
+        if (thingId == DbContract.NULL_ID) {
+            return false;
+        }
+
+        // Save Event entry data
         SqlEntryPackage entryPackage = convertEventToEntryPackage(event, true);
         return mRepository.updateSqlEntry(
                 EventEntryContract.TABLE_NAME, entryPackage, EventEntryContract.COL_ID);
@@ -150,7 +181,12 @@ public class EventEntryRWService extends Service implements RepositoryUser {
      * When add/remove any columns, consider editing this method
      */
     private boolean eventIsValid(@NonNull Event event, boolean checkId) {
-        return (((!checkId || event.getId() != DbContract.NULL_ID)) &&
+        return ((!checkId ||
+                (event.getId() != DbContract.NULL_ID &&
+                event.getThingId() != DbContract.NULL_ID &&
+                event.getEmbodierId() != DbContract.NULL_ID &&
+                event.getId() == event.getEmbodierId())) &&
+                event.getTableOfEmbodier().equals(EventEntryContract.TABLE_NAME) &&
                 event.getContentThingId() != DbContract.NULL_ID &&
                 event.getStartDatetime() < event.getEndDatetime() &&
                 event.getRepetition() != null);

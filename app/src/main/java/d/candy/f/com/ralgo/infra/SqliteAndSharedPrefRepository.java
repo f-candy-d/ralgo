@@ -283,6 +283,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
      * region; Load data from SQLite
      */
 
+    @NonNull
     @Override
     public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery query) {
         ArrayList<SqlEntryPackage> results = new ArrayList<>();

@@ -1,6 +1,8 @@
 package d.candy.f.com.ralgo.domain.service;
 
+import android.database.sqlite.SQLiteQuery;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 
@@ -20,12 +22,23 @@ public class EntryRWService extends Service implements RepositoryUser {
 
     public EntryRWService() {}
 
+    @Override
+    boolean isReady() {
+        return (mRepository != null);
+    }
+
+    @Override
+    public void setRepository(@NonNull Repository repository) {
+        mRepository = repository;
+    }
+
+    @Nullable
     public SqlEntryPackage readEntryForId
-            (@NonNull String tableName, @NonNull String idColumnName, long id) {
+            (@NonNull String tableName, @NonNull String idColumn, long id) {
 
         onServiceStart();
 
-        SqliteWhere.CondExpr idIs = new SqliteWhere.CondExpr(idColumnName).equalTo(id);
+        SqliteWhere.CondExpr idIs = new SqliteWhere.CondExpr(idColumn).equalTo(id);
         SqliteQuery query = new SqliteQuery();
         query.putTables(tableName);
         query.setSelection(idIs);
@@ -39,13 +52,27 @@ public class EntryRWService extends Service implements RepositoryUser {
         return null;
     }
 
-    @Override
-    boolean isReady() {
-        return (mRepository != null);
+    @NonNull
+    public ArrayList<SqlEntryPackage> readEntriesWithOneCondition
+            (@NonNull String tableName,
+             @NonNull String columnForCondition,
+             @NonNull SqliteWhere.CondExpr.CondOp operator,
+             @NonNull Object value) {
+
+        SqliteWhere.CondExpr condition =
+                new SqliteWhere.CondExpr(columnForCondition).join(value, operator);
+        SqliteQuery query = new SqliteQuery();
+        query.putTables(tableName);
+        query.setSelection(condition);
+
+        return mRepository.loadSqlEntries(query);
     }
 
-    @Override
-    public void setRepository(@NonNull Repository repository) {
-        mRepository = repository;
+    @NonNull
+    public ArrayList<SqlEntryPackage> readAllEntriesInTable(@NonNull String table) {
+
+        SqliteQuery query = new SqliteQuery();
+        query.putTables(table);
+        return mRepository.loadSqlEntries(query);
     }
 }

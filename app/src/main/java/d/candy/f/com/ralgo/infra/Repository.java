@@ -52,6 +52,7 @@ public interface Repository {
     /**
      * region; Load sql entry
      */
+    @NonNull
     ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery sqliteQuery);
 
     /**

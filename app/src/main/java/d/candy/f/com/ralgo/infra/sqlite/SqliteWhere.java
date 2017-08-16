@@ -170,7 +170,7 @@ public class SqliteWhere {
             mColumn = column;
         }
 
-        private <T> CondExpr join(@NonNull T right, @NonNull CondOp operator) {
+        public <T> CondExpr join(@NonNull T right, @NonNull CondOp operator) {
             mCondition = operator.toString() + SPACE + right.toString();
             return this;
         }
@@ -201,6 +201,10 @@ public class SqliteWhere {
 
         public void setColumn(@NonNull String column) {
             mColumn = column;
+        }
+
+        public void setCondition(@Nullable String condition) {
+            mCondition = condition;
         }
 
         @NonNull

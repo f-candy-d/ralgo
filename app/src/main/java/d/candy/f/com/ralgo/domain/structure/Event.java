@@ -1,6 +1,7 @@
 package d.candy.f.com.ralgo.domain.structure;
 
 import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
+import d.candy.f.com.ralgo.data_store.sql_database.EventEntryContract;
 import d.candy.f.com.ralgo.utils.Quantizable;
 
 /**
@@ -30,6 +31,8 @@ public class Event extends Thing {
         mEndDatetime = -1;
         mNote = null;
         mRepetition = null;
+        setEmbodierId(mId);
+        setTableOfEmbodier(EventEntryContract.TABLE_NAME);
     }
 
     public long getId() {
