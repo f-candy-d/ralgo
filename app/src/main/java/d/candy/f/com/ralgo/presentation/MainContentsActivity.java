@@ -3,6 +3,8 @@ package d.candy.f.com.ralgo.presentation;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Calendar;
+
 import d.candy.f.com.ralgo.R;
 import d.candy.f.com.ralgo.domain.DomainDirector;
+import d.candy.f.com.ralgo.utils.Day;
 
 public class MainContentsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,6 +35,12 @@ public class MainContentsActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_contents);
         init();
         initUI();
+
+        Day day = new Day();
+        Calendar startOfDay = day.getStartOfDay();
+        Calendar endOfDay = day.getStartOfNextDay();
+        Log.d("mylog", "start of day -> " + DateFormat.format("yyyy/MM/dd, E, kk:mm:ss", startOfDay));
+        Log.d("mylog", "end of day -> " + DateFormat.format("yyyy/MM/dd, E, kk:mm:ss", endOfDay));
     }
 
     @Override

@@ -2,21 +2,23 @@ package d.candy.f.com.ralgo.domain.service;
 
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
-
 import d.candy.f.com.ralgo.domain.RepositoryUser;
-import d.candy.f.com.ralgo.domain.structure.Event;
+import d.candy.f.com.ralgo.domain.structure.DaySchedule;
 import d.candy.f.com.ralgo.infra.Repository;
 
 /**
- * Created by daichi on 17/08/16.
+ * Created by daichi on 8/16/17.
  */
 
-public class LoadEventEntryService extends Service implements RepositoryUser {
+public class DayScheduleService extends Service implements RepositoryUser {
 
     private Repository mRepository = null;
+    @NonNull private DaySchedule mDaySchedule;
 
-    public LoadEventEntryService() {}
+    public DayScheduleService(long date) {
+        mDaySchedule = new DaySchedule(date);
+        initDaySchedule(date);
+    }
 
     @Override
     boolean isReady() {
@@ -28,5 +30,8 @@ public class LoadEventEntryService extends Service implements RepositoryUser {
         mRepository = repository;
     }
 
-//    public ArrayList<Event> loadEventsOnDate(long date)
+    private void initDaySchedule(long date) {
+        mDaySchedule.changeDate(date);
+
+    }
 }
