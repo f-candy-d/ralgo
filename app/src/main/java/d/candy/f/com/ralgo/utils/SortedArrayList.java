@@ -141,6 +141,20 @@ public class SortedArrayList<E> implements Iterable<E> {
         sort();
     }
 
+    public E front() {
+        if (mElements.isEmpty()) {
+            return null;
+        }
+        return mElements.get(0);
+    }
+
+    public E back() {
+        if (mElements.isEmpty()) {
+            return null;
+        }
+        return mElements.get(mElements.size() - 1);
+    }
+
     /**
      * region; Iterable implementation
      */
