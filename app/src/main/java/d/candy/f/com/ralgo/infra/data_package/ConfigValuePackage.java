@@ -1,4 +1,4 @@
-package d.candy.f.com.ralgo.infra.entry_package;
+package d.candy.f.com.ralgo.infra.data_package;
 
 import android.support.annotation.NonNull;
 
@@ -12,7 +12,7 @@ import d.candy.f.com.ralgo.infra.RepositoryDefaults;
  * Created by daichi on 8/14/17.
  */
 
-public class ConfigEntryPackage {
+public class ConfigValuePackage {
 
     /**
      * Value maps
@@ -32,13 +32,13 @@ public class ConfigEntryPackage {
     private int mDefaultInt = RepositoryDefaults.DEFAULT_INT;
     private String mDefaultString = RepositoryDefaults.DEFAULT_STRING;
 
-    public ConfigEntryPackage() {}
+    public ConfigValuePackage() {}
 
     /**
      * region; put
      */
 
-    public ConfigEntryPackage put(@NonNull String key, boolean value) {
+    public ConfigValuePackage put(@NonNull String key, boolean value) {
         if (mBooleanMap == null) {
             mBooleanMap = new HashMap<>();
         }
@@ -46,7 +46,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage put(@NonNull String key, float value) {
+    public ConfigValuePackage put(@NonNull String key, float value) {
         if (mFloatMap == null) {
             mFloatMap = new HashMap<>();
         }
@@ -54,7 +54,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage put(@NonNull String key, long value) {
+    public ConfigValuePackage put(@NonNull String key, long value) {
         if (mLongMap == null) {
             mLongMap = new HashMap<>();
         }
@@ -62,7 +62,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage put(@NonNull String key, int value) {
+    public ConfigValuePackage put(@NonNull String key, int value) {
         if (mIntMap == null) {
             mIntMap = new HashMap<>();
         }
@@ -70,7 +70,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage put(@NonNull String key, String value) {
+    public ConfigValuePackage put(@NonNull String key, String value) {
         if (mStringMap == null) {
             mStringMap = new HashMap<>();
         }
@@ -224,7 +224,7 @@ public class ConfigEntryPackage {
      * region; preset a key
      */
 
-    public ConfigEntryPackage presetKeyForLongValue(@NonNull String key) {
+    public ConfigValuePackage presetKeyForLongValue(@NonNull String key) {
         if (mLongMap == null) {
             mLongMap = new HashMap<>();
         }
@@ -232,7 +232,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage presetKeyForIntValue(@NonNull String key) {
+    public ConfigValuePackage presetKeyForIntValue(@NonNull String key) {
         if (mIntMap == null) {
             mIntMap = new HashMap<>();
         }
@@ -240,7 +240,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage presetKeyForFloatValue(@NonNull String key) {
+    public ConfigValuePackage presetKeyForFloatValue(@NonNull String key) {
         if (mFloatMap == null) {
             mFloatMap = new HashMap<>();
         }
@@ -248,7 +248,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage presetKeyForBooleanValue(@NonNull String key) {
+    public ConfigValuePackage presetKeyForBooleanValue(@NonNull String key) {
         if (mBooleanMap == null) {
             mBooleanMap = new HashMap<>();
         }
@@ -256,7 +256,7 @@ public class ConfigEntryPackage {
         return this;
     }
 
-    public ConfigEntryPackage presetKeyForStringValue(@NonNull String key) {
+    public ConfigValuePackage presetKeyForStringValue(@NonNull String key) {
         if (mStringMap == null) {
             mStringMap = new HashMap<>();
         }

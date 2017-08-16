@@ -2,6 +2,7 @@ package d.candy.f.com.ralgo.data_store.sql_database;
 
 import android.support.annotation.NonNull;
 
+import d.candy.f.com.ralgo.infra.Repository;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteTableUtils;
 
 /**
@@ -12,7 +13,7 @@ abstract public class DbContract {
 
     public static final String DATABASE_NAME = "ralgo_contents_database";
     public static final int DATABASE_VERSION = 1;
-    public static final long NULL_ENTRY_ID = -1;
+    public static final long NULL_ID = Repository.SQL_ENTRY_NULL_ID;
 
     @NonNull
     static SqliteTableUtils.TableSource[] getTableSourses() {

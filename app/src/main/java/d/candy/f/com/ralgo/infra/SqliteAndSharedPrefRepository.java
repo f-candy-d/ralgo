@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
-import d.candy.f.com.ralgo.data_store.sql_database.DbOpenHelper;
-import d.candy.f.com.ralgo.infra.entry_package.ConfigEntryPackage;
-import d.candy.f.com.ralgo.infra.entry_package.SqlEntryPackage;
+import d.candy.f.com.ralgo.infra.data_package.ConfigValuePackage;
+import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteDatabaseOpenHelper;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteWhere;
 
@@ -26,9 +25,13 @@ import d.candy.f.com.ralgo.infra.sqlite.SqliteWhere;
 public class SqliteAndSharedPrefRepository implements Repository {
 
     @NonNull final private Context mContext;
+    @NonNull final private SqliteDatabaseOpenHelper mDatabaseOpenHelper;
 
-    public SqliteAndSharedPrefRepository(@NonNull Context context) {
+    public SqliteAndSharedPrefRepository
+            (@NonNull Context context, @NonNull SqliteDatabaseOpenHelper databaseOpenHelper) {
+
         mContext = context;
+        mDatabaseOpenHelper = databaseOpenHelper;
     }
 
     /**
@@ -76,7 +79,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     }
 
     @Override
-    public void saveConfigEntry(@NonNull ConfigEntryPackage entryPackage) {
+    public void saveConfigValues(@NonNull ConfigValuePackage entryPackage) {
         SharedPreferences preferences = getPreferences();
         final SharedPreferences.Editor editor = preferences.edit();
 
@@ -184,7 +187,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     }
 
     @Override
-    public void loadConfigEntryForPresetKeys(@NonNull ConfigEntryPackage presetPackage) {
+    public void loadConfigValuesForPresetKeys(@NonNull ConfigValuePackage presetPackage) {
         SharedPreferences preferences = getPreferences();
 
         // boolean
@@ -239,19 +242,19 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public long saveSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openWritableDatabase();
         final long id = sqLiteDatabase.insert(tableName, null, entryPackage.toContentValues());
         sqLiteDatabase.close();
 
         // SQLiteDatabase#insert() method returns the row ID of the newly inserted row, or -1 if an error occurred.
         // See document -> https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)
-        return (id != -1) ? id : DbContract.NULL_ENTRY_ID;
+        return (id != -1) ? id : SQL_ENTRY_NULL_ID;
     }
 
     @Override
     public long[] saveSqlEntries(@NonNull String tableName, @NonNull Collection<SqlEntryPackage> entryPackages) {
         final long[] ids = new long[entryPackages.size()];
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openWritableDatabase();
         int index = 0;
 
         sqLiteDatabase.beginTransaction();
@@ -260,7 +263,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
                 final long id = sqLiteDatabase.insert(tableName, null, entry.toContentValues());
                 // SQLiteDatabase#insert() method returns the row ID of the newly inserted row, or -1 if an error occurred.
                 // See document -> https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)
-                ids[index] = (id != -1) ? id : DbContract.NULL_ENTRY_ID;
+                ids[index] = (id != -1) ? id : SQL_ENTRY_NULL_ID;
                 ++index;
             }
             sqLiteDatabase.setTransactionSuccessful();
@@ -281,7 +284,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery query) {
 
         ArrayList<SqlEntryPackage> results = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(
                 query.distinct(),
                 query.tables(),
@@ -325,12 +328,12 @@ public class SqliteAndSharedPrefRepository implements Repository {
     @Override
     public boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull String idColumnName) {
         final long id;
-        if (!entryPackage.containsKey(idColumnName) || (id = entryPackage.getAsLong(idColumnName)) == DbContract.NULL_ENTRY_ID) {
+        if (!entryPackage.containsKey(idColumnName) || (id = entryPackage.getAsLong(idColumnName)) == SQL_ENTRY_NULL_ID) {
             return false;
         }
 
         SqliteWhere.CondExpr idIs = new SqliteWhere.CondExpr(idColumnName).equalTo(id);
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openWritableDatabase();
 
         final int affected = sqLiteDatabase.update(tableName, entryPackage.toContentValues(), idIs.formalize(), null);
         sqLiteDatabase.close();
@@ -340,7 +343,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public int updateSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull SqliteWhere.Expr condition) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openWritableDatabase();
         final int affected = sqLiteDatabase.update(tableName, entryPackage.toContentValues(), condition.formalize(), null);
         sqLiteDatabase.close();
 
@@ -354,7 +357,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     @Override
     public boolean deleteSqlEntry(@NonNull String tableName, @NonNull String idColumnName, long id) {
         SqliteWhere.CondExpr idIs = new SqliteWhere.CondExpr(idColumnName).equalTo(id);
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openWritableDatabase();
 
         final int affected = sqLiteDatabase.delete(tableName, idIs.formalize(), null);
         sqLiteDatabase.close();
@@ -364,7 +367,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public int deleteSqlEntriesIfMatch(@NonNull String tableName, @NonNull SqliteWhere.Expr condition) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openWritableDatabase();
         final int affected = sqLiteDatabase.delete(tableName, condition.formalize(), null);
         sqLiteDatabase.close();
 
@@ -379,13 +382,4 @@ public class SqliteAndSharedPrefRepository implements Repository {
         return PreferenceManager.getDefaultSharedPreferences(mContext.getApplicationContext());
     }
 
-    private SQLiteDatabase getWritableDatabase() {
-        DbOpenHelper openHelper = new DbOpenHelper(mContext);
-        return openHelper.getWritableDatabase();
-    }
-
-    private SQLiteDatabase getReadableDatabase() {
-        DbOpenHelper openHelper = new DbOpenHelper(mContext);
-        return openHelper.getReadableDatabase();
-    }
 }

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import java.util.EnumMap;
 
+import d.candy.f.com.ralgo.data_store.sql_database.DbOpenHelper;
 import d.candy.f.com.ralgo.domain.service.Service;
 import d.candy.f.com.ralgo.infra.SqliteAndSharedPrefRepository;
 import d.candy.f.com.ralgo.infra.Repository;
@@ -20,6 +21,6 @@ public class DomainDirector<E extends Enum<E>> {
 
     public DomainDirector(@NonNull Context context, @NonNull Class<E> keyClass) {
         mEServiceMap = new EnumMap<>(keyClass);
-        mRepository = new SqliteAndSharedPrefRepository(context);
+        mRepository = new SqliteAndSharedPrefRepository(context, new DbOpenHelper(context));
     }
 }

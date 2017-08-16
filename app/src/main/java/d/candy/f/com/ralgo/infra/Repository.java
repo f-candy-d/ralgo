@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import d.candy.f.com.ralgo.infra.entry_package.ConfigEntryPackage;
-import d.candy.f.com.ralgo.infra.entry_package.SqlEntryPackage;
+import d.candy.f.com.ralgo.infra.data_package.ConfigValuePackage;
+import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteWhere;
 
@@ -16,6 +16,8 @@ import d.candy.f.com.ralgo.infra.sqlite.SqliteWhere;
 
 public interface Repository {
 
+    long SQL_ENTRY_NULL_ID = -1;
+
     /**
      * region; Save config data
      */
@@ -24,7 +26,7 @@ public interface Repository {
     void saveConfigValue(@NonNull String key, float value);
     void saveConfigValue(@NonNull String key, String value);
     void saveConfigValue(@NonNull String key, boolean value);
-    void saveConfigEntry(@NonNull ConfigEntryPackage entryPackage);
+    void saveConfigValues(@NonNull ConfigValuePackage entryPackage);
 
     /**
      * region; Load config data
@@ -39,7 +41,7 @@ public interface Repository {
     String loadConfigValueAsStringOrDefault(@NonNull String key, String def);
     boolean loadConfigValueAsBoolean(@NonNull String key);
     boolean loadConfigValueAsBooleanOrDefault(@NonNull String key, boolean def);
-    void loadConfigEntryForPresetKeys(@NonNull ConfigEntryPackage presetPackage);
+    void loadConfigValuesForPresetKeys(@NonNull ConfigValuePackage presetPackage);
 
     /**
      * region; Save sql entry
