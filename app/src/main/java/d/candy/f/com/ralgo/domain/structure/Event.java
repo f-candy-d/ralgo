@@ -18,8 +18,8 @@ public class Event extends Thing {
 
     private long mId;
     private long mContentThingId;
-    private long mStartDate;
-    private long mEndDate;
+    private long mStartDatetime;
+    private long mEndDatetime;
     private String mNote;
 
     public long getId() {
@@ -38,20 +38,20 @@ public class Event extends Thing {
         mContentThingId = contentThingId;
     }
 
-    public long getStartDate() {
-        return mStartDate;
+    public long getStartDatetime() {
+        return mStartDatetime;
     }
 
-    public void setStartDate(long startDate) {
-        mStartDate = startDate;
+    public void setStartDatetime(long startDatetime) {
+        mStartDatetime = startDatetime;
     }
 
-    public long getEndDate() {
-        return mEndDate;
+    public long getEndDatetime() {
+        return mEndDatetime;
     }
 
-    public void setEndDate(long endDate) {
-        mEndDate = endDate;
+    public void setEndDatetime(long endDatetime) {
+        mEndDatetime = endDatetime;
     }
 
     public String getNote() {

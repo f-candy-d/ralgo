@@ -21,24 +21,24 @@ public class MergeableEvent extends Event {
     public MergeableEvent(@NonNull Event initialEvent, @NonNull Comparator<Event> comparator) {
         mEvents  = new SortedArrayList<>(comparator);
         mEvents.add(initialEvent);
-        setEarliestDatetime(initialEvent.getStartDate());
-        setLatestDatetime(initialEvent.getEndDate());
+        setEarliestDatetime(initialEvent.getStartDatetime());
+        setLatestDatetime(initialEvent.getEndDatetime());
     }
 
     public long getEarliestDatetime() {
-        return getStartDate();
+        return getStartDatetime();
     }
 
     public long getLatestDatetime() {
-        return getEndDate();
+        return getEndDatetime();
     }
 
     public void setEarliestDatetime(long earliestDatetime) {
-        setStartDate(earliestDatetime);
+        setStartDatetime(earliestDatetime);
     }
 
     public void setLatestDatetime(long latestDatetime) {
-        setEndDate(latestDatetime);
+        setEndDatetime(latestDatetime);
     }
 
     public void changeComparator(@NonNull Comparator<Event> comparator) {
@@ -81,8 +81,8 @@ public class MergeableEvent extends Event {
             // Update dates
             final long earliest = getEarliestDatetime();
             final long latest = getLatestDatetime();
-            final long start = other.getStartDate();
-            final long end = other.getEndDate();
+            final long start = other.getStartDatetime();
+            final long end = other.getEndDatetime();
             setEarliestDatetime((earliest < start) ? earliest : start);
             setLatestDatetime((end < latest) ? latest  : earliest);
 
@@ -97,10 +97,10 @@ public class MergeableEvent extends Event {
      * Return true if possible to merge event2 into event1, false otherwise
      */
     private boolean isEventsMergeable(@NonNull Event event1, @NonNull Event event2) {
-        final long start1 = event1.getStartDate();
-        final long end1 = event1.getEndDate();
-        final long start2 = event2.getStartDate();
-        final long end2 = event2.getEndDate();
+        final long start1 = event1.getStartDatetime();
+        final long end1 = event1.getEndDatetime();
+        final long start2 = event2.getStartDatetime();
+        final long end2 = event2.getEndDatetime();
 
         return (start1 <= start2 && start2 < start1 ||
                 end2 < end1 && end1 <= end2);
@@ -113,7 +113,7 @@ public class MergeableEvent extends Event {
 
         long earliest = DEFAULT_LATEST_DATETIME;
         for (Event event : mEvents) {
-            earliest = Math.min(earliest, event.getStartDate());
+            earliest = Math.min(earliest, event.getStartDatetime());
         }
         return earliest;
     }
@@ -125,7 +125,7 @@ public class MergeableEvent extends Event {
 
         long latest = DEFAULT_EARLIEST_DATETIME;
         for (Event event : mEvents) {
-            latest = Math.max(latest, event.getEndDate());
+            latest = Math.max(latest, event.getEndDatetime());
         }
         return latest;
     }

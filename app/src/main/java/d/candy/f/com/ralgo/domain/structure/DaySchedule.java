@@ -17,9 +17,9 @@ public class DaySchedule {
             new Comparator<Event>() {
                 @Override
                 public int compare(Event event, Event t1) {
-                    if (event.getStartDate() < t1.getStartDate()) {
+                    if (event.getStartDatetime() < t1.getStartDatetime()) {
                         return -1;
-                    } else if (event.getStartDate() > t1.getStartDate()) {
+                    } else if (event.getStartDatetime() > t1.getStartDatetime()) {
                         return 1;
                     } else {
                         return 0;
@@ -66,24 +66,18 @@ public class DaySchedule {
 
         Calendar date = Calendar.getInstance();
         date.setTimeInMillis(mDate);
-        date.set(Calendar.HOUR_OF_DAY, 0);
-        date.set(Calendar.MINUTE, 0);
-        date.set(Calendar.MILLISECOND, 0);
+        setCalendarTimeZero(date);
 
         Calendar eventDate = Calendar.getInstance();
-        eventDate.setTimeInMillis(event.getStartDate());
-        eventDate.set(Calendar.HOUR_OF_DAY, 0);
-        eventDate.set(Calendar.MINUTE, 0);
-        eventDate.set(Calendar.MILLISECOND, 0);
+        eventDate.setTimeInMillis(event.getStartDatetime());
+        setCalendarTimeZero(eventDate);
 
         if (date.compareTo(eventDate) != 0) {
             return false;
         }
 
-        eventDate.setTimeInMillis(event.getEndDate());
-        eventDate.set(Calendar.HOUR_OF_DAY, 0);
-        eventDate.set(Calendar.MINUTE, 0);
-        eventDate.set(Calendar.MILLISECOND, 0);
+        eventDate.setTimeInMillis(event.getEndDatetime());
+        setCalendarTimeZero(eventDate);
 
         return (date.compareTo(eventDate) == 0);
     }
@@ -114,5 +108,11 @@ public class DaySchedule {
                 }
             }
         }
+    }
+
+    private void setCalendarTimeZero(@NonNull Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 }
