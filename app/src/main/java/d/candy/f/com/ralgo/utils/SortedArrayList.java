@@ -32,6 +32,7 @@ public class SortedArrayList<E> implements Iterable<E> {
 
     private void sort() {
         if (!mIsInTransaction) {
+            Log.d("mylog", "sort");
             Collections.sort(mElements, mComparator);
         }
     }
