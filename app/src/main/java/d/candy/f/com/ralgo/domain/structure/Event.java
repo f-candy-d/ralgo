@@ -12,21 +12,7 @@ public class Event extends Thing {
         EVERYDAY {@Override public int quantize() { return 0; }},
         WEEKLY {@Override public int quantize() { return 1; }},
         ONE_DAY {@Override public int quantize() { return 2; }},
-        CUSTOM {@Override public int quantize() { return 3;}};
-
-        public static final Converter<Repetition> CONVERTER =
-                new Converter<Repetition>() {
-                    @Override
-                    public Repetition convertFromQuantity(int quantity) {
-                        Repetition[] values = Repetition.values();
-                        for (Repetition repetition : values) {
-                            if (repetition.quantize() == quantity) {
-                                return repetition;
-                            }
-                        }
-                        return null;
-                    }
-                };
+        CUSTOM {@Override public int quantize() { return 3;}}
     }
 
 
@@ -35,4 +21,44 @@ public class Event extends Thing {
     private long mStartDate;
     private long mEndDate;
     private String mNote;
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        mId = id;
+    }
+
+    public long getContentThingId() {
+        return mContentThingId;
+    }
+
+    public void setContentThingId(long contentThingId) {
+        mContentThingId = contentThingId;
+    }
+
+    public long getStartDate() {
+        return mStartDate;
+    }
+
+    public void setStartDate(long startDate) {
+        mStartDate = startDate;
+    }
+
+    public long getEndDate() {
+        return mEndDate;
+    }
+
+    public void setEndDate(long endDate) {
+        mEndDate = endDate;
+    }
+
+    public String getNote() {
+        return mNote;
+    }
+
+    public void setNote(String note) {
+        mNote = note;
+    }
 }

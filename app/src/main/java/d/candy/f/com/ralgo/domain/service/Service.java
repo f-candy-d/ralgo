@@ -5,4 +5,12 @@ package d.candy.f.com.ralgo.domain.service;
  */
 
 abstract public class Service {
+
+    abstract boolean isReady();
+
+    protected void onServiceStart() {
+        if (!isReady()) {
+            throw new IllegalStateException("This service is not ready");
+        }
+    }
 }

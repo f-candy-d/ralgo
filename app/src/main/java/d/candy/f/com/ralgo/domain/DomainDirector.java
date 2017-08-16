@@ -23,4 +23,11 @@ public class DomainDirector<E extends Enum<E>> {
         mEServiceMap = new EnumMap<>(keyClass);
         mRepository = new SqliteAndSharedPrefRepository(context, new DbOpenHelper(context));
     }
+
+    public void addService(@NonNull E key, Service service) {
+        mEServiceMap.put(key, service);
+        if (service instanceof RepositoryUser) {
+            ((RepositoryUser) service).setRepository(mRepository);
+        }
+    }
 }
