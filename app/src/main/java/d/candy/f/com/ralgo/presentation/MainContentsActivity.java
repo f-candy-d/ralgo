@@ -16,8 +16,6 @@ import android.view.MenuItem;
 
 import d.candy.f.com.ralgo.R;
 import d.candy.f.com.ralgo.domain.DomainDirector;
-import d.candy.f.com.ralgo.domain.structure.Event;
-import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
 
 public class MainContentsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
