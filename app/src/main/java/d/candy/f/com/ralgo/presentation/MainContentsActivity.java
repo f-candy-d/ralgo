@@ -3,6 +3,7 @@ package d.candy.f.com.ralgo.presentation;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,9 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import d.candy.f.com.ralgo.R;
+import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 import d.candy.f.com.ralgo.domain.DomainDirector;
 import d.candy.f.com.ralgo.domain.service.EventEntryRWService;
+import d.candy.f.com.ralgo.domain.structure.Event;
 
 public class MainContentsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,6 +44,28 @@ public class MainContentsActivity extends AppCompatActivity
          */
         mDomainDirector.addService(RequestService.REQUEST_SERVICE, new EventEntryRWService());
         EventEntryRWService service = mDomainDirector.getAndCastService(RequestService.REQUEST_SERVICE, EventEntryRWService.class);
+        Event event = new Event();
+        Calendar calendar = Calendar.getInstance();
+        event.setContentThingId(111);
+        event.setStartDatetime(calendar.getTimeInMillis());
+        calendar.add(Calendar.HOUR_OF_DAY, 2);
+        event.setEndDatetime(calendar.getTimeInMillis());
+        event.setRepetition(Event.Repetition.EVERYDAY);
+        event.setNote("event note");
+
+        long id = service.writeEvent(event);
+        if (id == DbContract.NULL_ID) {
+            Log.d("mylog", "################### SAVE ERROR ####################################");
+        } else {
+            Log.d("mylog", "#### SAVED -> " + String.valueOf(id));
+        }
+
+        ArrayList<Event> events = service.readEventsOnDate(Calendar.getInstance());
+        if (events.size() == 0) {
+            Log.d("mylog", "################### LOAD ERROR ####################################");
+        } else {
+            Log.d("mylog", "################### LOADED -> " + events.get(0).toString());
+        }
     }
 
     @Override

@@ -1,12 +1,15 @@
 package d.candy.f.com.ralgo.infra;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -282,7 +285,6 @@ public class SqliteAndSharedPrefRepository implements Repository {
 
     @Override
     public ArrayList<SqlEntryPackage> loadSqlEntries(@NonNull SqliteQuery query) {
-
         ArrayList<SqlEntryPackage> results = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = mDatabaseOpenHelper.openReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(
@@ -296,28 +298,20 @@ public class SqliteAndSharedPrefRepository implements Repository {
                 query.orderBy(),
                 query.limit());
 
-        sqLiteDatabase.close();
-
-        String[] columns = query.columns();
-        if (columns == null) {
-            columns = cursor.getColumnNames();
-        }
-
         boolean isEOF = cursor.moveToFirst();
-        Bundle extras;
+        ContentValues contentValues;
         SqlEntryPackage entryPackage;
         while (isEOF) {
-            extras = cursor.getExtras();
-            entryPackage = new SqlEntryPackage();
-            for (String column : columns) {
-                entryPackage.putRecognizableObjectOrThrow(column, extras.get(column));
-            }
-
+            contentValues = new ContentValues();
+            DatabaseUtils.cursorRowToContentValues(cursor, contentValues);
+            entryPackage = new SqlEntryPackage(contentValues);
             results.add(entryPackage);
             isEOF = cursor.moveToNext();
         }
 
         cursor.close();
+        sqLiteDatabase.close();
+
         return results;
     }
 

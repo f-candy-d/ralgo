@@ -22,6 +22,10 @@ public class SqlEntryPackage {
         mColumnData = new ContentValues();
     }
 
+    public SqlEntryPackage(@NonNull ContentValues contentValues) {
+        mColumnData = contentValues;
+    }
+
     public ContentValues toContentValues() {
         return mColumnData;
     }
@@ -56,7 +60,7 @@ public class SqlEntryPackage {
         return this;
     }
 
-    public SqlEntryPackage putRecognizableObjectOrThrow(@NonNull String columnName, Object value) {
+    public SqlEntryPackage putStorableObjectOrThrow(@NonNull String columnName, @NonNull Object value) {
         if (value instanceof Integer) {
             put(columnName, (Integer) value);
         } else if (value instanceof Long) {
@@ -68,7 +72,11 @@ public class SqlEntryPackage {
         } else if (value instanceof String) {
             put(columnName, (String) value);
         } else {
-            throw new ClassCastException("Unrecognizable type of the object");
+            throw new ClassCastException(
+                    "Unrecognizable class type of the object -> columnName:"
+                            + columnName
+                            + " class:"
+                            + value.getClass().getName());
         }
 
         return this;
@@ -110,5 +118,10 @@ public class SqlEntryPackage {
 
     public boolean containsKey(@NonNull String key) {
         return mColumnData.containsKey(key);
+    }
+
+    @Override
+    public String toString() {
+        return "#SqlEntryPackage { " + mColumnData.toString() + " }";
     }
 }

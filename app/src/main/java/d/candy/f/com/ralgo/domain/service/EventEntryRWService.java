@@ -1,6 +1,7 @@
 package d.candy.f.com.ralgo.domain.service;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,6 +78,9 @@ public class EventEntryRWService extends Service implements RepositoryUser {
         return events;
     }
 
+    /**
+     * Return the row id of the inserted/updated Event entry, or DbContract.NULL_ID if an error occured
+     */
     public long writeEvent(@NonNull Event event) {
         if (event.getId() != DbContract.NULL_ID) {
             return (updateEvent(event)) ? event.getId() : DbContract.NULL_ID;
@@ -97,13 +101,17 @@ public class EventEntryRWService extends Service implements RepositoryUser {
         return mRepository.saveSqlEntry(EventEntryContract.TABLE_NAME, entryPackage);
     }
 
+    /**
+     * Return true if no error occured, false otherwise
+     */
     private boolean updateEvent(@NonNull Event event) {
         if (!eventIsValid(event, true)) {
             return false;
         }
 
         SqlEntryPackage entryPackage = convertEventToEntryPackage(event, true);
-        return true;
+        return mRepository.updateSqlEntry(
+                EventEntryContract.TABLE_NAME, entryPackage, EventEntryContract.COL_ID);
     }
 
     /**
