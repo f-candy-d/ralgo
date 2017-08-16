@@ -3,6 +3,7 @@ package d.candy.f.com.ralgo.presentation;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +16,8 @@ import android.view.MenuItem;
 
 import d.candy.f.com.ralgo.R;
 import d.candy.f.com.ralgo.domain.DomainDirector;
+import d.candy.f.com.ralgo.domain.structure.Event;
+import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
 
 public class MainContentsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

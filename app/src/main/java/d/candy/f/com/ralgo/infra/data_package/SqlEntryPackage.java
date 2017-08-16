@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import java.util.Set;
 
 import d.candy.f.com.ralgo.utils.Quantizable;
+import d.candy.f.com.ralgo.utils.QuantizableHelper;
 
 /**
  * Created by daichi on 8/14/17.
@@ -96,6 +97,11 @@ public class SqlEntryPackage {
     public <T> T getAsQuantizable(@NonNull String columnName, @NonNull Quantizable.Converter<T> converter) {
         final int quantity = mColumnData.getAsInteger(columnName);
         return converter.convertFromQuantity(quantity);
+    }
+
+    public <T extends Enum<T> & Quantizable> T getAsQuantizable(@NonNull String columnName, @NonNull Class<T> clazz) {
+        final int quantity = mColumnData.getAsInteger(columnName);
+        return QuantizableHelper.convertFromEnumClass(clazz, quantity);
     }
 
     public Set<String> getColumnNames() {

@@ -47,6 +47,9 @@ package d.candy.f.com.ralgo.utils;
  *         return converter.convertFromQuantity(quantity);
  *     }
  * </pre>
+ *
+ * OR, only for enum class, it is possible to do by using {@link QuantizableHelper#convertFromEnumClass(Class, int)}.
+ * In this case, static field 'CONVERTER' is not necessary.
  */
 
 public interface Quantizable {
