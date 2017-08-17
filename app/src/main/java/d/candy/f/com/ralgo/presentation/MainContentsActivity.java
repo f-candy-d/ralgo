@@ -43,32 +43,30 @@ public class MainContentsActivity extends AppCompatActivity
         /**
          * TEST
          */
-        mDomainDirector.addService(RequestService.REQUEST_SERVICE, new EventEntryRWService());
-        EventEntryRWService service = mDomainDirector.getAndCastService(RequestService.REQUEST_SERVICE, EventEntryRWService.class);
-        Event event = new Event();
-        Calendar calendar = Calendar.getInstance();
-        event.setContentThingId(111);
-        event.setStartDatetime(calendar.getTimeInMillis());
-        calendar.add(Calendar.HOUR_OF_DAY, 2);
-        event.setEndDatetime(calendar.getTimeInMillis());
-        event.setRepetition(Event.Repetition.EVERYDAY);
-        event.setNote("event note");
-
-        long id = service.writeEvent(event);
-        if (id == DbContract.NULL_ID) {
-            Log.d("mylog", "################### SAVE ERROR ####################################");
-        } else {
-            Log.d("mylog", "#### SAVED -> " + String.valueOf(id));
-        }
-
-        SqlEntryPackage entryPackage = new SqlEntryPackage();
-        entryPackage.getAsBoolean("ddd");
-        ArrayList<Event> events = service.readEventsOnDate(Calendar.getInstance());
-        if (events.size() == 0) {
-            Log.d("mylog", "################### LOAD ERROR ####################################");
-        } else {
-            Log.d("mylog", "################### LOADED -> " + events.get(0).toString());
-        }
+//        mDomainDirector.addService(RequestService.REQUEST_SERVICE, new EventEntryRWService());
+//        EventEntryRWService service = mDomainDirector.getAndCastService(RequestService.REQUEST_SERVICE, EventEntryRWService.class);
+//        Event event = new Event();
+//        Calendar calendar = Calendar.getInstance();
+//        event.setContentThingId(111);
+//        event.setStartDatetime(calendar.getTimeInMillis());
+//        calendar.add(Calendar.HOUR_OF_DAY, 2);
+//        event.setEndDatetime(calendar.getTimeInMillis());
+//        event.setRepetition(Event.Repetition.EVERYDAY);
+//        event.setNote("event note");
+//
+//        long id = service.writeEvent(event);
+//        if (id == DbContract.NULL_ID) {
+//            Log.d("mylog", "################### SAVE ERROR ####################################");
+//        } else {
+//            Log.d("mylog", "#### SAVED -> " + String.valueOf(id));
+//        }
+//
+//        ArrayList<Event> events = service.readEventsOnDate(Calendar.getInstance());
+//        if (events.size() == 0) {
+//            Log.d("mylog", "################### LOAD ERROR ####################################");
+//        } else {
+//            Log.d("mylog", "################### LOADED -> " + events.get(0).toString());
+//        }
     }
 
     @Override

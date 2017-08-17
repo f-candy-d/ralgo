@@ -321,7 +321,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     @Override
     public boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull String idColumnName) {
         final long id;
-        if (!entryPackage.containsKey(idColumnName) || (id = entryPackage.getAsLongOrDefault(idColumnName)) == SQL_ENTRY_NULL_ID) {
+        if (!entryPackage.containsKey(idColumnName) || (id = entryPackage.getAsLongOrThrow(idColumnName)) == SQL_ENTRY_NULL_ID) {
             return false;
         }
 
