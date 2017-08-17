@@ -1,5 +1,8 @@
 package d.candy.f.com.ralgo.data_store.sql_database;
 
+import android.support.annotation.NonNull;
+
+import d.candy.f.com.ralgo.domain.structure.People;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteTableUtils;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteDataType;
 
@@ -25,5 +28,17 @@ public class PeopleEntryContract {
                 .put(COL_NOTE, SqliteDataType.TEXT, true)
                 .put(COL_MAIL, SqliteDataType.TEXT, true)
                 .put(COL_TEL, SqliteDataType.TEXT, true);
+    }
+
+    /**
+     * Data validation checks
+     */
+
+    public static boolean isPeopleValid(long id, String name) {
+        return (id != DbContract.NULL_ID && isPeopleValid(name));
+    }
+
+    public static boolean isPeopleValid(String name) {
+        return (name != null);
     }
 }

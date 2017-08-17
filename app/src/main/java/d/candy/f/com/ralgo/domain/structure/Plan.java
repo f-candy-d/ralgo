@@ -8,6 +8,9 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 
 public class Plan extends Thing {
 
+    public static final String DEFAULT_NAME = null;
+    public static final String DEFAULT_NOTE = null;
+
     private long mId;
     private String mName;
     private String mNote;
@@ -19,7 +22,7 @@ public class Plan extends Thing {
     }
 
     public Plan() {
-        this(DbContract.NULL_ID, null, null);
+        this(DbContract.NULL_ID, DEFAULT_NAME, DEFAULT_NOTE);
     }
 
     public long getId() {

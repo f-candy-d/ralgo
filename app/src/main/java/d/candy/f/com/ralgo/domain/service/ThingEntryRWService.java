@@ -77,7 +77,7 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
     }
 
     private long saveThing(@NonNull Thing thing) {
-        if (!thingIsValid(thing, false)) {
+        if (!isThingValid(thing, false)) {
             return DbContract.NULL_ID;
         }
 
@@ -86,7 +86,7 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
     }
 
     private boolean updateThing(@NonNull Thing thing) {
-        if (!thingIsValid(thing, true)) {
+        if (!isThingValid(thing, true)) {
             return false;
         }
 
@@ -98,7 +98,8 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
     /**
      * When add/remove any column of Thing table, edit this method
      */
-    Thing createEntryPackageFromThing(@NonNull SqlEntryPackage entryPackage) {
+    @NonNull
+    private Thing createEntryPackageFromThing(@NonNull SqlEntryPackage entryPackage) {
         Thing thing = new Thing();
         thing.setThingId(entryPackage.getAsLongOrDefault(
                 ThingEntryContract.COL_ID, DbContract.NULL_ID));
@@ -123,10 +124,13 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
         return entryPackage;
     }
 
-    private boolean thingIsValid(@NonNull Thing thing, boolean checkId) {
-        return ((!checkId ||
-                (thing.getThingId() != DbContract.NULL_ID &&
-                thing.getEmbodierId() != DbContract.NULL_ID)) &&
-                thing.getTableOfEmbodier() != null);
+    private boolean isThingValid(@NonNull Thing thing, boolean checkId) {
+        if (checkId) {
+            return ThingEntryContract.isThingValid(
+                    thing.getThingId(), thing.getEmbodierId(), thing.getTableOfEmbodier());
+        } else {
+            return ThingEntryContract.isThingValid(
+                    thing.getEmbodierId(), thing.getTableOfEmbodier());
+        }
     }
 }

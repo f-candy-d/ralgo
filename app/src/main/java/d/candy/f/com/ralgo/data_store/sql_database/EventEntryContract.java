@@ -1,5 +1,8 @@
 package d.candy.f.com.ralgo.data_store.sql_database;
 
+import android.support.annotation.NonNull;
+
+import d.candy.f.com.ralgo.domain.structure.Event;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteTableUtils;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteDataType;
 
@@ -30,4 +33,23 @@ public class EventEntryContract {
                 .put(COL_REPETITION, SqliteDataType.INTEGER, false)
                 .put(COL_NOTE, SqliteDataType.TEXT, true);
     }
+
+    /**
+     * When add/remove any columns, consider editing this method
+     */
+    public static boolean isEventValid
+    (long id, long contentThingId, long startDate, long endDate, Event.Repetition repetition) {
+
+        return (id != DbContract.NULL_ID &&
+                isEventValid(contentThingId, startDate, endDate, repetition));
+    }
+
+    public static boolean isEventValid
+            (long contentThingId, long startDate, long endDate, Event.Repetition repetition) {
+
+        return (contentThingId != DbContract.NULL_ID &&
+                startDate <= endDate &&
+                repetition != null);
+    }
+
 }

@@ -8,21 +8,27 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 
 public class People extends Thing {
 
+    public static final String DEFAULT_NAME = null;
+    public static final String DEFAULT_NOTE = null;
+    public static final String DEFAULT_MAIL = null;
+    public static final String DEFAULT_TEL = null;
+
     private long mId;
     private String mName;
     private String mNote;
     private String mMail;
     private String mTel;
 
-    public People(long id, String name, String mail, String tel) {
+    public People(long id, String name, String mail, String tel, String note) {
         mId = id;
         mName = name;
         mMail = mail;
         mTel = tel;
+        mNote = note;
     }
 
     public People() {
-        this(DbContract.NULL_ID, null, null, null);
+        this(DbContract.NULL_ID, DEFAULT_NAME, DEFAULT_MAIL, DEFAULT_TEL, DEFAULT_NOTE);
     }
 
     public long getId() {

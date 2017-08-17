@@ -7,6 +7,7 @@ import java.util.Calendar;
 
 import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 import d.candy.f.com.ralgo.data_store.sql_database.EventEntryContract;
+import d.candy.f.com.ralgo.data_store.sql_database.ThingEntryContract;
 import d.candy.f.com.ralgo.domain.RepositoryUser;
 import d.candy.f.com.ralgo.domain.structure.Event;
 import d.candy.f.com.ralgo.infra.Repository;
@@ -118,6 +119,7 @@ public class EventEntryRWService extends Service implements RepositoryUser {
     /**
      * When add/remove any columns, edit this method.
      */
+    @NonNull
     private Event createEventFromEntryPackage(@NonNull SqlEntryPackage entryPackage) {
         Event event = new Event();
 
@@ -145,6 +147,7 @@ public class EventEntryRWService extends Service implements RepositoryUser {
     /**
      * When add/remove any columns, edit this method.
      */
+    @NonNull
     private SqlEntryPackage createEntryPackageFromEvent(@NonNull Event event, boolean includeId) {
         SqlEntryPackage entryPackage = new SqlEntryPackage();
         if (includeId) {
@@ -163,11 +166,19 @@ public class EventEntryRWService extends Service implements RepositoryUser {
      * When add/remove any columns, consider editing this method
      */
     private boolean eventIsValid(@NonNull Event event, boolean checkId) {
-        return ((!checkId ||
-                (event.getId() != DbContract.NULL_ID)) &&
-                event.getTableOfEmbodier().equals(EventEntryContract.TABLE_NAME) &&
-                event.getContentThingId() != DbContract.NULL_ID &&
-                event.getStartDatetime() < event.getEndDatetime() &&
-                event.getRepetition() != Event.DEFAULT_REPETITION);
+        if (checkId) {
+            return EventEntryContract.isEventValid(
+                    event.getId(),
+                    event.getContentThingId(),
+                    event.getStartDatetime(),
+                    event.getEndDatetime(),
+                    event.getRepetition());
+        } else {
+            return EventEntryContract.isEventValid(
+                    event.getContentThingId(),
+                    event.getStartDatetime(),
+                    event.getEndDatetime(),
+                    event.getRepetition());
+        }
     }
 }

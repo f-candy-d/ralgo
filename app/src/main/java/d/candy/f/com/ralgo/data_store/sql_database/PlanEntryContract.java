@@ -22,4 +22,16 @@ public class PlanEntryContract {
                 .put(COL_NAME, SqliteDataType.TEXT, false)
                 .put(COL_NOTE, SqliteDataType.TEXT, true);
     }
+
+    /**
+     * Data validation checks
+     */
+
+    public static boolean isPlanValid(long id, String name) {
+        return (id != DbContract.NULL_ID && isPlanValid(name));
+    }
+
+    public static boolean isPlanValid(String name) {
+        return (name != null);
+    }
 }
