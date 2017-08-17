@@ -6,10 +6,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -323,7 +321,7 @@ public class SqliteAndSharedPrefRepository implements Repository {
     @Override
     public boolean updateSqlEntry(@NonNull String tableName, @NonNull SqlEntryPackage entryPackage, @NonNull String idColumnName) {
         final long id;
-        if (!entryPackage.containsKey(idColumnName) || (id = entryPackage.getAsLong(idColumnName)) == SQL_ENTRY_NULL_ID) {
+        if (!entryPackage.containsKey(idColumnName) || (id = entryPackage.getAsLongOrDefault(idColumnName)) == SQL_ENTRY_NULL_ID) {
             return false;
         }
 

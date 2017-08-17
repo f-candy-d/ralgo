@@ -1,7 +1,6 @@
 package d.candy.f.com.ralgo.domain.service;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,7 +9,6 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 import d.candy.f.com.ralgo.data_store.sql_database.EventEntryContract;
 import d.candy.f.com.ralgo.domain.RepositoryUser;
 import d.candy.f.com.ralgo.domain.structure.Event;
-import d.candy.f.com.ralgo.domain.structure.Thing;
 import d.candy.f.com.ralgo.infra.Repository;
 import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
@@ -68,23 +66,14 @@ public class EventEntryRWService extends Service implements RepositoryUser {
         query.putTables(EventEntryContract.TABLE_NAME);
         query.setSelection(startAndEndOnDate);
 
-        // Load Event entries from Repository
+        // Find Event entries
         ArrayList<SqlEntryPackage> results = mRepository.loadSqlEntries(query);
 
         ArrayList<Event> events = new ArrayList<>(results.size());
-        ThingEntryRWService thingEntryRWService = new ThingEntryRWService();
-        thingEntryRWService.setRepository(mRepository);
         Event event;
-        Thing thing;
         for (SqlEntryPackage entryPackage : results) {
-            event = convertEntryPackageToEvent(entryPackage);
-            // Read the Thing entry data for the readed Event entry
-            thing = thingEntryRWService.readThingForEmbodierId(event.getEmbodierId());
-            if (thing != null) {
-                event.setThingId(thing.getThingId());
-                event.setEmbodierId(thing.getEmbodierId());
-                event.setTableOfEmbodier(thing.getTableOfEmbodier());
-            }
+            event = createEventFromEntryPackage(entryPackage);
+            events.add(event);
         }
 
         return events;
@@ -109,17 +98,7 @@ public class EventEntryRWService extends Service implements RepositoryUser {
             return DbContract.NULL_ID;
         }
 
-        // Save Thing entry data
-        ThingEntryRWService thingEntryRWService = new ThingEntryRWService();
-        thingEntryRWService.setRepository(mRepository);
-        final long thingId = thingEntryRWService.writeThing(event);
-        if (thingId == DbContract.NULL_ID) {
-            return DbContract.NULL_ID;
-        }
-        event.setThingId(thingId);
-
-        // Save Event entry data
-        SqlEntryPackage entryPackage = convertEventToEntryPackage(event, false);
+        SqlEntryPackage entryPackage = createEntryPackageFromEvent(event, false);
         return mRepository.saveSqlEntry(EventEntryContract.TABLE_NAME, entryPackage);
     }
 
@@ -131,39 +110,42 @@ public class EventEntryRWService extends Service implements RepositoryUser {
             return false;
         }
 
-        // Save Thing entry data
-        ThingEntryRWService thingEntryRWService = new ThingEntryRWService();
-        thingEntryRWService.setRepository(mRepository);
-        final long thingId = thingEntryRWService.writeThing(event);
-        if (thingId == DbContract.NULL_ID) {
-            return false;
-        }
-
-        // Save Event entry data
-        SqlEntryPackage entryPackage = convertEventToEntryPackage(event, true);
+        SqlEntryPackage entryPackage = createEntryPackageFromEvent(event, true);
         return mRepository.updateSqlEntry(
                 EventEntryContract.TABLE_NAME, entryPackage, EventEntryContract.COL_ID);
     }
 
     /**
-     * When add/remove any columns, edit this method
+     * When add/remove any columns, edit this method.
      */
-    private Event convertEntryPackageToEvent(@NonNull SqlEntryPackage entryPackage) {
+    private Event createEventFromEntryPackage(@NonNull SqlEntryPackage entryPackage) {
         Event event = new Event();
-        event.setId(entryPackage.getAsLong(EventEntryContract.COL_ID));
-        event.setStartDatetime(entryPackage.getAsLong(EventEntryContract.COL_START_DATE));
-        event.setEndDatetime(entryPackage.getAsLong(EventEntryContract.COL_END_DATE));
-        event.setContentThingId(entryPackage.getAsLong(EventEntryContract.COL_CONTENT_THING_ID));
-        event.setRepetition(entryPackage.getAsQuantizable(EventEntryContract.COL_REPETITION, Event.Repetition.class));
-        event.setNote(entryPackage.getAsString(EventEntryContract.COL_NOTE));
+
+        event.setId(entryPackage.getAsLongOrDefault(
+                EventEntryContract.COL_ID, DbContract.NULL_ID));
+
+        event.setStartDatetime(entryPackage.getAsLongOrDefault(
+                EventEntryContract.COL_START_DATE, Event.DEFAULT_START_DATE));
+
+        event.setEndDatetime(entryPackage.getAsLongOrDefault(
+                EventEntryContract.COL_END_DATE, Event.DEFAULT_END_DATE));
+
+        event.setContentThingId(entryPackage.getAsLongOrDefault(
+                EventEntryContract.COL_CONTENT_THING_ID, DbContract.NULL_ID));
+
+        event.setRepetition(entryPackage.getAsQuantizableOrDefault(
+                EventEntryContract.COL_REPETITION, Event.DEFAULT_REPETITION, Event.Repetition.class));
+
+        event.setNote(entryPackage.getAsStringOrDefault(
+                EventEntryContract.COL_NOTE, Event.DEFAULT_NOTE));
 
         return event;
     }
 
     /**
-     * When add/remove any columns, edit this method
+     * When add/remove any columns, edit this method.
      */
-    private SqlEntryPackage convertEventToEntryPackage(@NonNull Event event, boolean includeId) {
+    private SqlEntryPackage createEntryPackageFromEvent(@NonNull Event event, boolean includeId) {
         SqlEntryPackage entryPackage = new SqlEntryPackage();
         if (includeId) {
             entryPackage.put(EventEntryContract.COL_ID, event.getId());
@@ -182,13 +164,10 @@ public class EventEntryRWService extends Service implements RepositoryUser {
      */
     private boolean eventIsValid(@NonNull Event event, boolean checkId) {
         return ((!checkId ||
-                (event.getId() != DbContract.NULL_ID &&
-                event.getThingId() != DbContract.NULL_ID &&
-                event.getEmbodierId() != DbContract.NULL_ID &&
-                event.getId() == event.getEmbodierId())) &&
+                (event.getId() != DbContract.NULL_ID)) &&
                 event.getTableOfEmbodier().equals(EventEntryContract.TABLE_NAME) &&
                 event.getContentThingId() != DbContract.NULL_ID &&
                 event.getStartDatetime() < event.getEndDatetime() &&
-                event.getRepetition() != null);
+                event.getRepetition() != Event.DEFAULT_REPETITION);
     }
 }

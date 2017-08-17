@@ -8,6 +8,8 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 
 public class Thing {
 
+    public static final String DEFAULT_TABLE_OF_EMBODIER = null;
+
     private long mThingId;
     private long mEmbodierId;
     private String mTableOfEmbodier;

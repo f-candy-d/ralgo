@@ -82,34 +82,115 @@ public class SqlEntryPackage {
         return this;
     }
 
-    public int getAsInt(@NonNull String columnName) {
-        return mColumnData.getAsInteger(columnName);
+    public int getAsIntOrDefault(@NonNull String columnName, int defaultValue) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsInteger(columnName);
+        }
+        return defaultValue;
     }
 
-    public long getAsLong(@NonNull String columnName) {
-        return mColumnData.getAsLong(columnName);
+    public int getAsIntOrThrow(@NonNull String columnName) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsInteger(columnName);
+        }
+        throw new IllegalArgumentException("Column:" + columnName + " does not exists");
     }
 
-    public float getAsFloat(@NonNull String columnName) {
-        return mColumnData.getAsFloat(columnName);
+    public long getAsLongOrDefault(@NonNull String columnName, long defaultValue) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsLong(columnName);
+        }
+        return defaultValue;
     }
 
-    public boolean getAsBoolean(@NonNull String columnName) {
-        return mColumnData.getAsBoolean(columnName);
+    public long getAsLongOrThrow(@NonNull String columnName) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsLong(columnName);
+        }
+        throw new IllegalArgumentException("Column:" + columnName + " does not exists");
     }
 
-    public String getAsString(@NonNull String columnName) {
-        return mColumnData.getAsString(columnName);
+    public float getAsFloatOrDefault(@NonNull String columnName, float defaultValue) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsFloat(columnName);
+        }
+        return defaultValue;
     }
 
-    public <T> T getAsQuantizable(@NonNull String columnName, @NonNull Quantizable.Converter<T> converter) {
-        final int quantity = mColumnData.getAsInteger(columnName);
-        return converter.convertFromQuantity(quantity);
+    public float getAsFloatOrDefaultThrow(@NonNull String columnName) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsFloat(columnName);
+        }
+        throw new IllegalArgumentException("Column:" + columnName + " does not exists");
     }
 
-    public <T extends Enum<T> & Quantizable> T getAsQuantizable(@NonNull String columnName, @NonNull Class<T> clazz) {
-        final int quantity = mColumnData.getAsInteger(columnName);
-        return QuantizableHelper.convertFromEnumClass(clazz, quantity);
+    public boolean getAsBooleanOrDefault(@NonNull String columnName, boolean defaultValue) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsBoolean(columnName);
+        }
+        return defaultValue;
+    }
+
+    public boolean getAsBooleanOrThrow(@NonNull String columnName) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsBoolean(columnName);
+        }
+        throw new IllegalArgumentException("Column:" + columnName + " does not exists");
+    }
+
+    public String getAsStringOrDefault(@NonNull String columnName, String defaultValue) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsString(columnName);
+        }
+        return defaultValue;
+    }
+
+    public String getAsStringOrThrow(@NonNull String columnName) {
+        if (mColumnData.containsKey(columnName)) {
+            return mColumnData.getAsString(columnName);
+        }
+        throw new IllegalArgumentException("Column:" + columnName + " does not exists");
+    }
+
+    public <T> T getAsQuantizableOrDefault(@NonNull String columnName,
+                                           T defaultValue,
+                                           @NonNull Quantizable.Converter<T> converter) {
+
+        if (mColumnData.containsKey(columnName)) {
+            final int quantity = mColumnData.getAsInteger(columnName);
+            return converter.convertFromQuantity(quantity);
+        }
+        return defaultValue;
+    }
+
+    public <T> T getAsQuantizableOrThrow
+            (@NonNull String columnName, @NonNull Quantizable.Converter<T> converter) {
+
+        if (mColumnData.containsKey(columnName)) {
+            final int quantity = mColumnData.getAsInteger(columnName);
+            return converter.convertFromQuantity(quantity);
+        }
+        throw new IllegalArgumentException("Column:" + columnName + " does not exists");
+    }
+
+    public <T extends Enum<T> & Quantizable> T getAsQuantizableOrDefault
+            (@NonNull String columnName, T defaultValue, @NonNull Class<T> clazz) {
+
+        if (mColumnData.containsKey(columnName)) {
+            final int quantity = mColumnData.getAsInteger(columnName);
+            return QuantizableHelper.convertFromEnumClass(clazz, quantity);
+        }
+        return defaultValue;
+    }
+
+    public <T extends Enum<T> & Quantizable> T getAsQuantizableOrThrow
+            (@NonNull String columnName, @NonNull Class<T> clazz) {
+
+        if (mColumnData.containsKey(columnName)) {
+            final int quantity = mColumnData.getAsInteger(columnName);
+            return QuantizableHelper.convertFromEnumClass(clazz, quantity);
+        }
+        throw new IllegalArgumentException("Column:" + columnName + " does not exists");
     }
 
     public Set<String> getColumnNames() {
@@ -124,4 +205,5 @@ public class SqlEntryPackage {
     public String toString() {
         return "#SqlEntryPackage { " + mColumnData.toString() + " }";
     }
+
 }

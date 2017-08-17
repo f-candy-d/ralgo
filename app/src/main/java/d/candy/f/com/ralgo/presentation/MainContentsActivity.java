@@ -22,6 +22,7 @@ import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
 import d.candy.f.com.ralgo.domain.DomainDirector;
 import d.candy.f.com.ralgo.domain.service.EventEntryRWService;
 import d.candy.f.com.ralgo.domain.structure.Event;
+import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
 
 public class MainContentsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -60,6 +61,8 @@ public class MainContentsActivity extends AppCompatActivity
             Log.d("mylog", "#### SAVED -> " + String.valueOf(id));
         }
 
+        SqlEntryPackage entryPackage = new SqlEntryPackage();
+        entryPackage.getAsBoolean("ddd");
         ArrayList<Event> events = service.readEventsOnDate(Calendar.getInstance());
         if (events.size() == 0) {
             Log.d("mylog", "################### LOAD ERROR ####################################");

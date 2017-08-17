@@ -46,7 +46,7 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
         if (results.size() == 0) {
             return null;
         } else if (results.size() == 1) {
-            return convertEntryPackageToThing(results.get(0));
+            return createEntryPackageFromThing(results.get(0));
         }
 
         throw new IllegalStateException(
@@ -62,7 +62,7 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
         ArrayList<Thing> things = new ArrayList<>(sqlEntryPackages.size());
 
         for (SqlEntryPackage entryPackage : sqlEntryPackages) {
-            things.add(convertEntryPackageToThing(entryPackage));
+            things.add(createEntryPackageFromThing(entryPackage));
         }
 
         return things;
@@ -81,31 +81,52 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
             return DbContract.NULL_ID;
         }
 
-        SqlEntryPackage entryPackage = convertThingToEntryPackage(thing, false);
+        SqlEntryPackage entryPackage = createThingFromEntryPackage(thing, false);
         return mRepository.saveSqlEntry(ThingEntryContract.TABLE_NAME, entryPackage);
     }
 
     private boolean updateThing(@NonNull Thing thing) {
-        return false;
+        if (!thingIsValid(thing, true)) {
+            return false;
+        }
+
+        SqlEntryPackage toEntryPackage = createThingFromEntryPackage(thing, true);
+        return mRepository.updateSqlEntry(
+                ThingEntryContract.TABLE_NAME, toEntryPackage, ThingEntryContract.COL_ID);
     }
 
     /**
      * When add/remove any column of Thing table, edit this method
      */
-    private Thing convertEntryPackageToThing(@NonNull SqlEntryPackage entryPackage) {
+    Thing createEntryPackageFromThing(@NonNull SqlEntryPackage entryPackage) {
         Thing thing = new Thing();
-        thing.setThingId(entryPackage.getAsLong(ThingEntryContract.COL_ID));
-        thing.setEmbodierId(entryPackage.getAsLong(ThingEntryContract.COL_EMBODIER_ID));
-        thing.setTableOfEmbodier(entryPackage.getAsString(ThingEntryContract.COL_TABLE_OF_EMBODIER));
+        thing.setThingId(entryPackage.getAsLongOrDefault(
+                ThingEntryContract.COL_ID, DbContract.NULL_ID));
+
+        thing.setEmbodierId(entryPackage.getAsLongOrDefault(
+                ThingEntryContract.COL_EMBODIER_ID, DbContract.NULL_ID));
+
+        thing.setTableOfEmbodier(entryPackage.getAsStringOrDefault(
+                ThingEntryContract.COL_TABLE_OF_EMBODIER, Thing.DEFAULT_TABLE_OF_EMBODIER));
 
         return thing;
     }
 
-    private SqlEntryPackage convertThingToEntryPackage(@NonNull Thing thing, boolean includeId) {
-        return null;
+    private SqlEntryPackage createThingFromEntryPackage(@NonNull Thing thing, boolean includeId) {
+        SqlEntryPackage entryPackage = new SqlEntryPackage();
+        if (includeId) {
+            entryPackage.put(ThingEntryContract.COL_ID, thing.getThingId());
+        }
+        entryPackage.put(ThingEntryContract.COL_EMBODIER_ID, thing.getEmbodierId());
+        entryPackage.put(ThingEntryContract.COL_TABLE_OF_EMBODIER, thing.getTableOfEmbodier());
+
+        return entryPackage;
     }
 
     private boolean thingIsValid(@NonNull Thing thing, boolean checkId) {
-        return false;
+        return ((!checkId ||
+                (thing.getThingId() != DbContract.NULL_ID &&
+                thing.getEmbodierId() != DbContract.NULL_ID)) &&
+                thing.getTableOfEmbodier() != null);
     }
 }

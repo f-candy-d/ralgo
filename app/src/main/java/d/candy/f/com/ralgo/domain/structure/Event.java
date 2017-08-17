@@ -10,6 +10,11 @@ import d.candy.f.com.ralgo.utils.Quantizable;
 
 public class Event extends Thing {
 
+    public static final long DEFAULT_START_DATE = -1;
+    public static final long DEFAULT_END_DATE = -1;
+    public static final Event.Repetition DEFAULT_REPETITION = null;
+    public static final String DEFAULT_NOTE = null;
+
     public enum Repetition implements Quantizable {
         EVERYDAY {@Override public int quantize() { return 0; }},
         WEEKLY {@Override public int quantize() { return 1; }},
@@ -27,10 +32,10 @@ public class Event extends Thing {
     public Event() {
         mId = DbContract.NULL_ID;
         mContentThingId = DbContract.NULL_ID;
-        mStartDatetime = -1;
-        mEndDatetime = -1;
-        mNote = null;
-        mRepetition = null;
+        mStartDatetime = DEFAULT_START_DATE;
+        mEndDatetime = DEFAULT_END_DATE;
+        mNote = DEFAULT_NOTE;
+        mRepetition = DEFAULT_REPETITION;
         setEmbodierId(mId);
         setTableOfEmbodier(EventEntryContract.TABLE_NAME);
     }

@@ -5,6 +5,8 @@ import d.candy.f.com.ralgo.infra.sqlite.SqliteDataType;
 
 /**
  * Created by daichi on 8/15/17.
+ *
+ * NOTICE : When add/remove any columns, edit {@link EntryContractHelper#getThingEntryColumns()}.
  */
 
 public class ThingEntryContract {
