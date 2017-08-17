@@ -1,6 +1,7 @@
 package d.candy.f.com.ralgo.domain.structure;
 
 import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
+import d.candy.f.com.ralgo.data_store.sql_database.PlanEntryContract;
 
 /**
  * Created by daichi on 17/08/16.
@@ -16,6 +17,7 @@ public class Plan extends Thing {
     private String mNote;
 
     public Plan(long id, String name, String note) {
+        super(DbContract.NULL_ID, id, PlanEntryContract.TABLE_NAME);
         mId = id;
         mName = name;
         mNote = note;

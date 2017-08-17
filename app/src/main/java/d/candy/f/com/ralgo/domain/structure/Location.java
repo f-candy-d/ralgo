@@ -1,6 +1,7 @@
 package d.candy.f.com.ralgo.domain.structure;
 
 import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
+import d.candy.f.com.ralgo.data_store.sql_database.LocationEntryContract;
 
 /**
  * Created by daichi on 17/08/16.
@@ -16,6 +17,7 @@ public class Location extends Thing {
     private String mNote;
 
     public Location(long id, String name, String note) {
+        super(DbContract.NULL_ID, id, LocationEntryContract.TABLE_NAME);
         mId = id;
         mName = name;
         mNote = note;

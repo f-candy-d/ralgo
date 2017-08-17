@@ -11,7 +11,7 @@ import d.candy.f.com.ralgo.utils.Quantizable;
 public class Event extends Thing {
 
     public static final long DEFAULT_START_DATE = -1;
-    public static final long DEFAULT_END_DATE = -1;
+    public static final long DEFAULT_END_DATE = DEFAULT_START_DATE - 1;
     public static final Event.Repetition DEFAULT_REPETITION = null;
     public static final String DEFAULT_NOTE = null;
 
@@ -30,14 +30,13 @@ public class Event extends Thing {
     private Repetition mRepetition;
 
     public Event() {
+        super(DbContract.NULL_ID, DbContract.NULL_ID, EventEntryContract.TABLE_NAME);
         mId = DbContract.NULL_ID;
         mContentThingId = DbContract.NULL_ID;
         mStartDatetime = DEFAULT_START_DATE;
         mEndDatetime = DEFAULT_END_DATE;
         mNote = DEFAULT_NOTE;
         mRepetition = DEFAULT_REPETITION;
-        setEmbodierId(mId);
-        setTableOfEmbodier(EventEntryContract.TABLE_NAME);
     }
 
     public long getId() {

@@ -1,6 +1,7 @@
 package d.candy.f.com.ralgo.domain.structure;
 
 import d.candy.f.com.ralgo.data_store.sql_database.DbContract;
+import d.candy.f.com.ralgo.data_store.sql_database.PeopleEntryContract;
 
 /**
  * Created by daichi on 17/08/16.
@@ -20,6 +21,7 @@ public class People extends Thing {
     private String mTel;
 
     public People(long id, String name, String mail, String tel, String note) {
+        super(DbContract.NULL_ID, id, PeopleEntryContract.TABLE_NAME);
         mId = id;
         mName = name;
         mMail = mail;
