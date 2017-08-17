@@ -3,6 +3,9 @@ package d.candy.f.com.ralgo.infra.sqlite;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.text.method.CharacterPickerDialog;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by daichi on 8/15/17.
@@ -48,6 +51,10 @@ public class SqliteWhere {
         }
 
         @NonNull abstract public String formalize();
+
+        protected CharSequence encloseBySingleQuote(@NonNull CharSequence string) {
+            return "'" + string + "'";
+        }
     }
 
     /**
@@ -163,47 +170,52 @@ public class SqliteWhere {
             }
         }
 
-        @NonNull private String mColumn;
-        @Nullable private String mCondition = null;
+        @NonNull private CharSequence mColumn;
+        @Nullable private CharSequence mCondition = null;
 
-        public CondExpr(@NonNull String column) {
+        public CondExpr(@NonNull CharSequence column) {
             mColumn = column;
         }
 
-        public <T> CondExpr join(@NonNull T right, @NonNull CondOp operator) {
-            mCondition = operator.toString() + SPACE + right.toString();
+        public CondExpr join(@NonNull Object right, @NonNull CondOp operator) {
+            if (right instanceof CharSequence) {
+                mCondition = operator.toString() + SPACE + encloseBySingleQuote(right.toString());
+            } else {
+                mCondition = operator.toString() + SPACE + right.toString();
+            }
+            
             return this;
         }
 
-        public <T> CondExpr lessThan(@NonNull T right) {
+        public CondExpr lessThan(@NonNull Object right) {
             return join(right, CondOp.LT);
         }
 
-        public <T> CondExpr lessThanOrEqualTo(@NonNull T right) {
+        public CondExpr lessThanOrEqualTo(@NonNull Object right) {
             return join(right, CondOp.LTE);
         }
 
-        public <T> CondExpr graterThan(@NonNull T right) {
+        public CondExpr graterThan(@NonNull Object right) {
             return join(right, CondOp.GT);
         }
 
-        public <T> CondExpr graterThanOrEqualTo(@NonNull T right) {
+        public CondExpr graterThanOrEqualTo(@NonNull Object right) {
             return join(right, CondOp.GTE);
         }
 
-        public <T> CondExpr equalTo(@NonNull T right) {
+        public CondExpr equalTo(@NonNull Object right) {
             return join(right, CondOp.EQ);
         }
 
-        public <T> CondExpr notEqualTo(@NonNull T right) {
+        public CondExpr notEqualTo(@NonNull Object right) {
             return join(right, CondOp.NEQ);
         }
 
-        public void setColumn(@NonNull String column) {
+        public void setColumn(@NonNull CharSequence column) {
             mColumn = column;
         }
 
-        public void setCondition(@Nullable String condition) {
+        public void setCondition(@Nullable CharSequence condition) {
             mCondition = condition;
         }
 
@@ -223,25 +235,31 @@ public class SqliteWhere {
      */
     public static class BetweenExpr extends Expr {
 
-        @NonNull private String mColumn;
-        private String mMin;
-        private String mMax;
+        @NonNull private CharSequence mColumn;
+        private CharSequence mMin;
+        private CharSequence mMax;
         private boolean mExcludeBoundaryOfMin = false;
         private boolean mExcludeBoundaryOfMax = false;
 
-        public BetweenExpr(@NonNull String column) {
+        public BetweenExpr(@NonNull CharSequence column) {
             mColumn = column;
             mMax = null;
             mMin = null;
         }
 
-        public <T> BetweenExpr setRange(@NonNull T min, @NonNull T max) {
-            mMin = min.toString();
-            mMax = max.toString();
+        public BetweenExpr setRange(@NonNull Object min, @NonNull Object max) {
+            mMin = (min instanceof CharSequence)
+                    ? encloseBySingleQuote(min.toString())
+                    : min.toString();
+
+            mMax = (max instanceof CharSequence)
+                    ? encloseBySingleQuote(max.toString())
+                    : max.toString();
+
             return this;
         }
 
-        public BetweenExpr setColumn(@NonNull String column) {
+        public BetweenExpr setColumn(@NonNull CharSequence column) {
             mColumn = column;
             return this;
         }
@@ -282,24 +300,24 @@ public class SqliteWhere {
      */
     public static class LikeExpr extends Expr {
 
-        @NonNull private String mColumn;
-        private String mRegex;
+        @NonNull private CharSequence mColumn;
+        private CharSequence mRegex;
 
-        public LikeExpr(@NonNull String column) {
+        public LikeExpr(@NonNull CharSequence column) {
             this(column, null);
         }
 
-        public LikeExpr(@NonNull String column, String regex) {
+        public LikeExpr(@NonNull CharSequence column, CharSequence regex) {
             mColumn = column;
             mRegex = regex;
         }
 
-        public LikeExpr setRegex(@NonNull String regex) {
+        public LikeExpr setRegex(@NonNull CharSequence regex) {
             mRegex = regex;
             return this;
         }
 
-        public LikeExpr setColumn(@NonNull String column) {
+        public LikeExpr setColumn(@NonNull CharSequence column) {
             mColumn = column;
             return this;
         }
@@ -320,16 +338,15 @@ public class SqliteWhere {
      */
     public static class InExpr extends Expr {
 
-        @NonNull private String mColumn;
+        @NonNull private CharSequence mColumn;
         @Nullable private String mArgs;
 
-        public InExpr(@NonNull String column) {
+        public InExpr(@NonNull CharSequence column) {
             mColumn = column;
             mArgs = null;
         }
 
-        @SafeVarargs
-        public <T> InExpr(@NonNull String column, @NonNull T... args) {
+        public InExpr(@NonNull CharSequence column, @NonNull Object... args) {
             this(column);
             addArgs(args);
         }
@@ -338,17 +355,27 @@ public class SqliteWhere {
             mArgs = null;
         }
 
-        @SafeVarargs
-        final public <T> void resetArgs(@NonNull T... args) {
+        final public void resetArgs(@NonNull Object... args) {
             resetArgs();
             addArgs(args);
         }
 
-        @SafeVarargs
-        final public <T> InExpr addArgs(@NonNull T... args) {
+        final public InExpr addArgs(@NonNull Object... args) {
+
             if (args.length != 0) {
                 String commaSep = ",";
-                String newArgs = TextUtils.join(commaSep, args);
+                String newArgs;
+
+                if (args instanceof CharSequence[]) {
+                    CharSequence[] stringArgs = new CharSequence[args.length];
+                    for (int i = 0; i < args.length; ++i) {
+                        stringArgs[i] = encloseBySingleQuote(args[i].toString());
+                    }
+                    newArgs = TextUtils.join(commaSep, stringArgs);
+                } else {
+                    newArgs = TextUtils.join(commaSep, args);
+                }
+
                 if (mArgs != null) {
                     mArgs = mArgs.concat(commaSep + newArgs);
                 } else {
@@ -359,7 +386,7 @@ public class SqliteWhere {
             return this;
         }
 
-        public InExpr setColumn(@NonNull String column) {
+        public InExpr setColumn(@NonNull CharSequence column) {
             mColumn = column;
             return this;
         }

@@ -31,7 +31,7 @@ public class Event extends Thing {
 
     public Event() {
         super(DbContract.NULL_ID, DbContract.NULL_ID, EventEntryContract.TABLE_NAME);
-        mId = DbContract.NULL_ID;
+        mId = getThingEmbodierId();
         mContentThingId = DbContract.NULL_ID;
         mStartDatetime = DEFAULT_START_DATE;
         mEndDatetime = DEFAULT_END_DATE;
@@ -39,12 +39,21 @@ public class Event extends Thing {
         mRepetition = DEFAULT_REPETITION;
     }
 
+    @Override
     public long getId() {
         return mId;
     }
 
+    @Override
     public void setId(long id) {
+        super.setId(id);
         mId = id;
+    }
+
+    @Override
+    public void setThingEmbodierId(long thingEmbodierId) {
+        super.setThingEmbodierId(thingEmbodierId);
+        setId(thingEmbodierId);
     }
 
     public long getContentThingId() {

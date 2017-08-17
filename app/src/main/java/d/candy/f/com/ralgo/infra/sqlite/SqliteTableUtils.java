@@ -94,13 +94,17 @@ public class SqliteTableUtils {
         return true;
     }
 
-    public static boolean resetTable(@NonNull SQLiteDatabase sqLiteDatabase, @NonNull TableSource source) {
+    public static boolean resetTable(@NonNull SQLiteDatabase sqLiteDatabase,
+                                     @NonNull TableSource... sources) {
         if (!sqLiteDatabase.isOpen() || sqLiteDatabase.isReadOnly()) {
             return false;
         }
 
-        deleteTable(sqLiteDatabase, source.getTableName());
-        createTable(sqLiteDatabase, source);
+        for (TableSource source : sources) {
+            deleteTable(sqLiteDatabase, source.getTableName());
+            createTable(sqLiteDatabase, source);
+        }
+
         return true;
     }
 }

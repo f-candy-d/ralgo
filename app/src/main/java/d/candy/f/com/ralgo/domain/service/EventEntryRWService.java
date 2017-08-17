@@ -1,6 +1,7 @@
 package d.candy.f.com.ralgo.domain.service;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -80,10 +81,23 @@ public class EventEntryRWService extends Service implements RepositoryUser {
         return events;
     }
 
+    @Nullable
+    public Event readEventForId(long id) {
+        onServiceStart();
+
+        EntryRWService entryRWService = new EntryRWService();
+        entryRWService.setRepository(mRepository);
+        SqlEntryPackage entryPackage = entryRWService.readEntryForId(EventEntryContract.TABLE_NAME, EventEntryContract.COL_ID, id);
+
+        return (entryPackage != null) ? createEventFromEntryPackage(entryPackage) : null;
+    }
+
     /**
      * Return the row id of the inserted/updated Event entry, or DbContract.NULL_ID if an error occured
      */
     public long writeEvent(@NonNull Event event) {
+        onServiceStart();
+
         if (event.getId() != DbContract.NULL_ID) {
             return (updateEvent(event)) ? event.getId() : DbContract.NULL_ID;
         } else {

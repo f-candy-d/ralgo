@@ -27,11 +27,14 @@ public class Location extends Thing {
         this(DbContract.NULL_ID, DEFAULT_NAME, DEFAULT_NOTE);
     }
 
+    @Override
     public long getId() {
         return mId;
     }
 
+    @Override
     public void setId(long id) {
+        super.setId(id);
         mId = id;
     }
 

@@ -2,6 +2,7 @@ package d.candy.f.com.ralgo.domain.service;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ import d.candy.f.com.ralgo.domain.RepositoryUser;
 import d.candy.f.com.ralgo.domain.structure.Thing;
 import d.candy.f.com.ralgo.infra.Repository;
 import d.candy.f.com.ralgo.infra.data_package.SqlEntryPackage;
+import d.candy.f.com.ralgo.infra.sqlite.SqliteQuery;
 import d.candy.f.com.ralgo.infra.sqlite.SqliteWhere;
 
 /**
@@ -34,14 +36,18 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
     }
 
     @Nullable
-    public Thing readThingForEmbodierId(long embodierId) {
-        EntryRWService entryRWService = new EntryRWService();
-        entryRWService.setRepository(mRepository);
-        ArrayList<SqlEntryPackage> results = entryRWService.readEntriesWithOneCondition(
-                ThingEntryContract.TABLE_NAME,
-                ThingEntryContract.COL_EMBODIER_ID,
-                SqliteWhere.CondExpr.CondOp.EQ,
-                embodierId);
+    public Thing readThingForEmbodierIdAndTable(long embodierId, @NonNull String table) {
+        SqliteWhere.CondExpr embodierIdIs =
+                new SqliteWhere.CondExpr(ThingEntryContract.COL_EMBODIER_ID).equalTo(embodierId);
+        SqliteWhere.CondExpr tableNameIs =
+                new SqliteWhere.CondExpr(ThingEntryContract.COL_TABLE_OF_EMBODIER).equalTo(table);
+        SqliteWhere.LogicExpr where = new SqliteWhere.LogicExpr(embodierIdIs).and(tableNameIs);
+
+        SqliteQuery query = new SqliteQuery();
+        query.putTables(ThingEntryContract.TABLE_NAME);
+        query.setSelection(where);
+
+        ArrayList<SqlEntryPackage> results = mRepository.loadSqlEntries(query);
 
         if (results.size() == 0) {
             return null;
@@ -78,6 +84,7 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
 
     private long saveThing(@NonNull Thing thing) {
         if (!isThingValid(thing, false)) {
+            Log.d("mylog", "thing is invalid");
             return DbContract.NULL_ID;
         }
 
@@ -104,7 +111,7 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
         thing.setThingId(entryPackage.getAsLongOrDefault(
                 ThingEntryContract.COL_ID, DbContract.NULL_ID));
 
-        thing.setEmbodierId(entryPackage.getAsLongOrDefault(
+        thing.setThingEmbodierId(entryPackage.getAsLongOrDefault(
                 ThingEntryContract.COL_EMBODIER_ID, DbContract.NULL_ID));
 
         thing.setTableOfEmbodier(entryPackage.getAsStringOrDefault(
@@ -118,7 +125,7 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
         if (includeId) {
             entryPackage.put(ThingEntryContract.COL_ID, thing.getThingId());
         }
-        entryPackage.put(ThingEntryContract.COL_EMBODIER_ID, thing.getEmbodierId());
+        entryPackage.put(ThingEntryContract.COL_EMBODIER_ID, thing.getThingEmbodierId());
         entryPackage.put(ThingEntryContract.COL_TABLE_OF_EMBODIER, thing.getTableOfEmbodier());
 
         return entryPackage;
@@ -127,10 +134,10 @@ public class ThingEntryRWService extends Service implements RepositoryUser {
     private boolean isThingValid(@NonNull Thing thing, boolean checkId) {
         if (checkId) {
             return ThingEntryContract.isThingValid(
-                    thing.getThingId(), thing.getEmbodierId(), thing.getTableOfEmbodier());
+                    thing.getThingId(), thing.getThingEmbodierId(), thing.getTableOfEmbodier());
         } else {
             return ThingEntryContract.isThingValid(
-                    thing.getEmbodierId(), thing.getTableOfEmbodier());
+                    thing.getThingEmbodierId(), thing.getTableOfEmbodier());
         }
     }
 }
