@@ -40,8 +40,6 @@ public class MainContentsActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_contents);
         init();
         initUI();
-
-        SqliteRWTest.test(this);
     }
 
     @Override
