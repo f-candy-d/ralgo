@@ -1,0 +1,31 @@
+<resources>
+    <declare-styleable name="DayEventsViewer">
+        <!-- DateLabel -->
+        <attr name="dateLabelText" format="string"/>
+        <attr name="dateLabelTextColor" format="color"/>
+        <attr name="dateLabelMarginLeft" format="dimension"/>
+        <attr name="dateLabelMarginRight" format="dimension"/>
+        <attr name="dateLabelMarginTop" format="dimension"/>
+        <attr name="dateLabelMarginBottom" format="dimension"/>
+        <attr name="dateLabelTextSize" format="dimension"/>
+
+        <!-- NoEventsMessage -->
+        <attr name="noEventsMessage" format="string"/>
+        <attr name="noEventsMessageMarginLeft" format="dimension"/>
+        <attr name="noEventsMessageMarginRight" format="dimension"/>
+        <attr name="noEventsMessageMarginTop" format="dimension"/>
+        <attr name="noEventsMessageMarginBottom" format="dimension"/>
+        <attr name="noEventsMessageTextSize" format="dimension"/>
+        <attr name="noeventsMessageTextColor" format="color"/>
+
+        <!-- EventView -->
+        <attr name="eventViewCornerRadius" format="dimension"/>
+        <attr name="eventViewElevation" format="dimension"/>
+        <attr name="spaceSizeBetweenEventViews" format="dimension"/>
+        <attr name="eventViewMarginLeft" format="dimension"/>
+        <attr name="eventViewMarginRight" format="dimension"/>
+
+        <!-- Misc -->
+        <attr name="shownEventsLimit" format="integer"/>
+    </declare-styleable>
+</resources>

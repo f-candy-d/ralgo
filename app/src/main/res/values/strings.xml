@@ -8,4 +8,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Default values for DayEventsViewer class -->
+    <string name="day_events_viewer_example_date_label_text">18</string>
+    <string name="day_events_viewer_example_no_events_message">No events on today.</string>
+
 </resources>

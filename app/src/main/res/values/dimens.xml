@@ -5,4 +5,24 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Default values for DayEventsViewer class -->
+    <dimen name="dayEventsViewerCardElevation">2dp</dimen>
+    <dimen name="dayEventsViewerCardCornerRadius">2dp</dimen>
+    <dimen name="dayEventsViewerSpaceSizeBetweenCards">1dp</dimen>
+    <dimen name="dayEventsViewerCardMarginLeft">18dp</dimen>
+    <dimen name="dayEventsViewerCardMarginRight">18dp</dimen>
+    <dimen name="dayEventsViewerDateLabelMarginTop">16dp</dimen>
+    <dimen name="dayEventsViewerDateLabelMarginBottom">16dp</dimen>
+    <dimen name="dayEventsViewerDateLabelMarginRight">8dp</dimen>
+    <dimen name="dayEventsViewerDateLabelMarginLeft">16dp</dimen>
+    <dimen name="dayEventsViewerDateLabelTextSize">24sp</dimen>
+    <dimen name="dayEventsViewerNoEventsMessageMarginTop">8dp</dimen>
+    <dimen name="dayEventsViewerNoEventsMessageMarginBottom">8dp</dimen>
+    <dimen name="dayEventsViewerNoEventsMessageMarginRight">8dp</dimen>
+    <dimen name="dayEventsViewerNoEventsMessageMarginLeft">8dp</dimen>
+    <dimen name="dayEventsViewerNoEventsMessageTextSize">16sp</dimen>
+    <dimen name="dayEventsViewerCardShadowMarginBtoom">4dp</dimen>
+    <dimen name="dayEventsViewerCardShadowMarginSide">2dp</dimen>
+
 </resources>

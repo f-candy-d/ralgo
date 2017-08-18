@@ -19,9 +19,28 @@ import d.candy.f.com.ralgo.presentation.recycler_view_fragment.RecyclerViewFragm
  */
 public class DayScheduleFragment extends RecyclerViewFragment<DayScheduleFragment.ViewHolder> {
 
+    public static class LayoutHolder extends DayEventsViewer.EventViewLayoutHolder {
+
+        public LayoutHolder() {}
+
+        @Override
+        protected void onEventViewCreated(View layoutRoot) {
+
+        }
+
+        @Override
+        protected int getLayoutXml() {
+            return R.layout.simple_event_card;
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        DayEventsViewer<LayoutHolder> mDayEventsViewer;
+
         public ViewHolder(View view) {
             super(view);
+            mDayEventsViewer = view.findViewById(R.id.test_layout);
         }
     }
 
@@ -77,12 +96,15 @@ public class DayScheduleFragment extends RecyclerViewFragment<DayScheduleFragmen
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.plan_card, parent, false);
+                .inflate(R.layout.test_layout, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        if (holder.mDayEventsViewer.countEvents() < holder.mDayEventsViewer.getShownEventsLimit()) {
+            holder.mDayEventsViewer.addEventView(new LayoutHolder());
+        }
     }
 
     @Override
