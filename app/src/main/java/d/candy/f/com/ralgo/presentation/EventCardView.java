@@ -90,8 +90,9 @@ public class EventCardView extends RelativeLayout {
      */
     public void setThemeColor(int color) {
         final int themeColor = ContextCompat.getColor(mContext, color);
-        mCardView.setBackgroundColor(themeColor);
+        mCardView.setCardBackgroundColor(themeColor);
         mInitialCharLabel.setTextColor(themeColor);
+        mHeaderLabel.setTextColor(themeColor);
     }
 
     private String getFirstCharacter(String string) {

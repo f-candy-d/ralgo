@@ -3,8 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="50dp"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="6dp"
-    android:backgroundTint="#4CAF50"
+    app:cardBackgroundColor="#4CAF50"
     android:layout_centerHorizontal="true"
     android:id="@+id/minimum_event_card_view_card_view">
 

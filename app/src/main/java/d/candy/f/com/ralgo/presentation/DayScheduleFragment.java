@@ -42,9 +42,8 @@ public class DayScheduleFragment extends RecyclerViewFragment<DayScheduleFragmen
         public ViewHolder(View view) {
             super(view);
 //            mDayEventsViewer = view.findViewById(R.id.test_layout);
-//            mNameMarkerCardView = view.findViewById(R.id.test_layout);
-//            mNameMarkerCardView.changeMode(NameMarkerCardView.CARD_MODE_NARROW);
-//            mNameMarkerCardView.setInitialCharacter("Question");
+            mEventCardView = view.findViewById(R.id.test_layout_event_view);
+            mEventCardView.setThemeColor(R.color.materialColorOrange500);
         }
     }
 

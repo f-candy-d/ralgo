@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#455A64</color>
     <color name="colorAccent">#FF9100</color>
 
+    <color name="materialColorOrange500">#FF9800</color>
+
     <!-- Default values for DayEventsViewer class -->
     <color name="dayEventsViewerDateLabelTextColor">#4CAF50</color>
 

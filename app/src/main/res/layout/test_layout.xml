@@ -23,7 +23,8 @@
         <d.candy.f.com.ralgo.presentation.EventCardView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="150dp"/>
+            android:layout_height="150dp"
+            android:id="@+id/test_layout_event_view"/>
 
     </LinearLayout>
 
@@ -39,8 +40,7 @@
             android:layout_marginTop="150dp"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="200dp"
-            android:id="@+id/test_layout"/>
+            android:layout_height="200dp"/>
 
         <d.candy.f.com.ralgo.presentation.MinimumEventCardView
             android:layout_marginTop="50dp"
