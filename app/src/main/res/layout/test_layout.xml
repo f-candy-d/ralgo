@@ -1,13 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:paddingLeft="80dp"
+    android:background="@color/colorPrimary">
 
-    <d.candy.f.com.ralgo.presentation.DayEventsViewer
+    <d.candy.f.com.ralgo.presentation.EventCardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/test_layout"/>
+        android:orientation="horizontal">
+
+        <d.candy.f.com.ralgo.presentation.EventCardView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="100dp"/>
+
+        <d.candy.f.com.ralgo.presentation.EventCardView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="150dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <d.candy.f.com.ralgo.presentation.MinimumEventCardView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="400dp"/>
+        <d.candy.f.com.ralgo.presentation.MinimumEventCardView
+            android:layout_marginTop="150dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="200dp"
+            android:id="@+id/test_layout"/>
+
+        <d.candy.f.com.ralgo.presentation.MinimumEventCardView
+            android:layout_marginTop="50dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="250dp"/>
+    </LinearLayout>
 
 </LinearLayout>

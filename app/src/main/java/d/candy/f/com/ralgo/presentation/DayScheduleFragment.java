@@ -36,11 +36,15 @@ public class DayScheduleFragment extends RecyclerViewFragment<DayScheduleFragmen
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        DayEventsViewer<LayoutHolder> mDayEventsViewer;
+//        DayEventsViewer<LayoutHolder> mDayEventsViewer;
+        EventCardView mEventCardView;
 
         public ViewHolder(View view) {
             super(view);
-            mDayEventsViewer = view.findViewById(R.id.test_layout);
+//            mDayEventsViewer = view.findViewById(R.id.test_layout);
+//            mNameMarkerCardView = view.findViewById(R.id.test_layout);
+//            mNameMarkerCardView.changeMode(NameMarkerCardView.CARD_MODE_NARROW);
+//            mNameMarkerCardView.setInitialCharacter("Question");
         }
     }
 
@@ -102,9 +106,9 @@ public class DayScheduleFragment extends RecyclerViewFragment<DayScheduleFragmen
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (holder.mDayEventsViewer.countEvents() < holder.mDayEventsViewer.getShownEventsLimit()) {
-            holder.mDayEventsViewer.addEventView(new LayoutHolder());
-        }
+//        if (holder.mDayEventsViewer.countEvents() < holder.mDayEventsViewer.getShownEventsLimit()) {
+//            holder.mDayEventsViewer.addEventView(new LayoutHolder());
+//        }
     }
 
     @Override

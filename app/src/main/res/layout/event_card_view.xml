@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="6dp"
+        android:backgroundTint="#4CAF50"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/event_card_view_card_view">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/event_card_view_content_layout_container">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <TextView
+                android:id="@+id/event_card_view_initial_char_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:gravity="center"
+                android:paddingLeft="16dp"
+                android:paddingStart="16dp"
+                android:paddingRight="8dp"
+                android:paddingEnd="8dp"
+                android:text="E"
+                android:textColor="#4CAF50"
+                android:background="#FFFFFF"
+                android:textSize="22sp"/>
+
+            <TextView
+                android:id="@+id/event_card_view_header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="6dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="6dp"
+                android:paddingStart="0dp"
+                android:gravity="center_vertical"
+                android:text="vent name is here!"
+                android:textColor="#4CAF50"
+                android:textSize="16sp"
+                android:background="#FFFFFF"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_toRightOf="@+id/event_card_view_initial_char_label"
+                android:layout_toEndOf="@+id/event_card_view_initial_char_label"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
