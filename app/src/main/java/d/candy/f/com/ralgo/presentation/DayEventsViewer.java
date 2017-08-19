@@ -263,7 +263,7 @@ public class DayEventsViewer<E extends DayEventsViewer.EventViewLayoutHolder> ex
             // Add the new CardView to this view
             mCardViewContainer.addView(cardView);
 
-        } else if (countEvents() + 1 == mShownEventsLimit) {
+        } else {
             showMoreButton(true);
         }
 
