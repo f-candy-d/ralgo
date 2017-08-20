@@ -68,7 +68,7 @@ public class SqliteTableUtils {
 
         for (String column : columns) {
             pair = source.get(column);
-            // pair.second -> is a column nullable or not
+            // pair.mSecond -> is a column nullable or not
             if (pair.second) {
                 tokens[i] = column + " " + pair.first.toString();
             } else {
